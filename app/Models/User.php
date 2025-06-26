@@ -2,47 +2,72 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
+        'username',
         'name',
-        'email',
         'password',
+        'level_user_id',
+        'mahasiswa_id',
+        'pegawai_id',
+        'jabatan_struktural_id',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    // Casting tipe data
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    // Relasi ke LevelUser
+    public function levelUser()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(LevelUser::class);
+    }
+
+    // Relasi ke Mahasiswa (nullable)
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class);
+    }
+
+    // Relasi ke Pegawai (nullable)
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class);
+    }
+
+    // Relasi ke JabatanStruktural (nullable)
+    public function jabatanStruktural()
+    {
+        return $this->belongsTo(JabatanStruktural::class);
+    }
+
+    // Mutator untuk password agar otomatis di-hash
+    public function setPasswordAttribute($password)
+    {
+        // Hanya hash jika password belum hashed
+        if (\Illuminate\Support\Facades\Hash::needsRehash($password)) {
+            $this->attributes['password'] = bcrypt($password);
+        } else {
+            $this->attributes['password'] = $password;
+        }
+    }
+
+    // Contoh scope untuk user aktif
+    public function scopeAktif($query)
+    {
+        return $query->where('status', 'aktif');
     }
 }
