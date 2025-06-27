@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Tambahkan alias middleware di sini
+        $middleware->alias([
+            'level' => \App\Http\Middleware\CheckUserLevel::class, // Baris ini ditambahkan
+        ]);
+
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
