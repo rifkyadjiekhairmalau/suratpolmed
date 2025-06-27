@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
     $request->authenticate();
     $request->session()->regenerate();
 
-    return redirect()->route('admin.users.index');
+    return redirect()->route('admin.dashboard');
 }
 
     /**

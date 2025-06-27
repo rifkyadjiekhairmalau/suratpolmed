@@ -47,6 +47,7 @@ export default function Login({ status, canResetPassword }) {
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData("username", e.target.value)}
+                        placeholder="Masukkan NIM/NIP/ID"
                     />
 
                     <InputError message={errors.username} className="mt-2" />
@@ -63,6 +64,7 @@ export default function Login({ status, canResetPassword }) {
                         className="mt-1 block w-full border-violet-300 focus:border-violet-500 focus:ring-violet-500"
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
+                        placeholder="Masukkan Password"
                     />
 
                     <InputError message={errors.password} className="mt-2" />
