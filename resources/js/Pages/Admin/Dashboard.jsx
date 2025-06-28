@@ -11,7 +11,7 @@ const StatCard = ({ title, value, icon }) => (
             })}
         </div>
         <div>
-            <p className="text-gray-500 text-sm font-medium group-hover:text-violet-700 transition">{title}</p>
+            <p className="text-black-500 text-sm font-semi-bold group-hover:text-violet-700 transition">{title}</p>
             <p className="text-3xl font-extrabold text-gray-800 group-hover:text-violet-900 transition">{value}</p>
         </div>
     </div>
@@ -30,17 +30,18 @@ const DosenIcon = () => (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
 );
-const TendikIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+const UsersIcon = () => (
+    // Ikon Total Pengguna - People
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-4-4h-1M7 20h5v-2a4 4 0 00-4-4H7m4-6a4 4 0 11-8 0 4 4 0 018 0zm10 0a4 4 0 11-8 0 4 4 0 018 0z" />
     </svg>
 );
 
 export default function Dashboard({ auth }) {
     const stats = {
+        pengguna: 1,
+        pegawai: 1,
         mahasiswa: 1,
-        dosen: 1,
-        tendik: 1,
     };
 
     return (
@@ -54,9 +55,9 @@ export default function Dashboard({ auth }) {
                     <p className="text-gray-600">Ringkasan data total pengguna dalam sistem.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <StatCard title="Total Pengguna" value={stats.dosen.toString()} icon={<DosenIcon />} />
-                    <StatCard title="Total Pegawai" value={stats.mahasiswa.toString()} icon={<DosenIcon />} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-bold">
+                    <StatCard title="Total Pengguna" value={stats.pengguna.toString()} icon={<UsersIcon/>} />
+                    <StatCard title="Total Pegawai" value={stats.pegawai.toString()} icon={<DosenIcon />} />
                     <StatCard title="Total Mahasiswa" value={stats.mahasiswa.toString()} icon={<MahasiswaIcon />} />
                 </div>
             </div>

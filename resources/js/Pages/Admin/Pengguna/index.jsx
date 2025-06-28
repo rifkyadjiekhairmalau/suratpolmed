@@ -14,7 +14,7 @@ export default function Pengguna({
     const [searchQuery, setSearchQuery] = useState("");
     const [roleFilter, setRoleFilter] = useState("Semua Role");
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 10;
+    const ITEMS_PER_PAGE = 8;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
@@ -244,19 +244,19 @@ export default function Pengguna({
                                 <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[20%]">
                                     Nama
                                 </th>
-                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[15%]">
+                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[20%]">
                                     Username
                                 </th>
-                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[15%]">
+                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[10%]">
                                     Role
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[20%]">
                                     Jabatan
                                 </th>
-                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[10%]">
+                                <th className="px-4 py-3 text-left text-xs font-bold text-black-600 uppercase w-[5%]">
                                     Status
                                 </th>
-                                <th className="px-4 py-3 text-center text-xs font-bold text-black-600 uppercase w-[20%]">
+                                <th className="px-4 py-3 text-center text-xs font-bold text-black-600 uppercase w-[10%]">
                                     Aksi
                                 </th>
                             </tr>
@@ -428,236 +428,246 @@ export default function Pengguna({
 
             {/* Modal for Add/Edit User */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-                    <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full mx-4">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold text-gray-800">
-                                {modalMode === "add"
-                                    ? "Tambah Pengguna Baru"
-                                    : "Edit Pengguna"}
-                            </h3>
-                            <button
-                                onClick={handleCloseModal}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="name"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Nama Lengkap:
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={data.name}
-                                    onChange={(e) =>
-                                        setData("name", e.target.value)
-                                    }
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    required
-                                />
-                                {errors.name && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.name}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="username"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Username:
-                                </label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    value={data.username}
-                                    onChange={(e) =>
-                                        setData("username", e.target.value)
-                                    }
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    required
-                                />
-                                {errors.username && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.username}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="password"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Password:
-                                </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    value={data.password}
-                                    onChange={(e) =>
-                                        setData("password", e.target.value)
-                                    }
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                                    // Password is required for 'add', but nullable for 'edit'
-                                    required={modalMode === "add"}
-                                />
-                                {modalMode === "edit" && (
-                                    <p className="text-gray-500 text-xs mt-1">
-                                        Biarkan kosong jika tidak ingin mengubah
-                                        password.
-                                    </p>
-                                )}
-                                {errors.password && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.password}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="level_user_id"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Role:
-                                </label>
-                                <select
-                                    id="level_user_id"
-                                    name="level_user_id"
-                                    value={data.level_user_id}
-                                    onChange={(e) =>
-                                        setData("level_user_id", e.target.value)
-                                    }
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    required
-                                >
-                                    <option value="">Pilih Role</option>
-                                    {roleOptions
-                                        .filter((opt) => opt.id !== "all")
-                                        .map((role) => (
-                                            <option
-                                                key={role.id}
-                                                value={role.id}
-                                            >
-                                                {role.nama}
-                                            </option>
-                                        ))}
-                                </select>
-                                {errors.level_user_id && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.level_user_id}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="jabatan_struktural_id"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Jabatan Struktural (Opsional):
-                                </label>
-                                <select
-                                    id="jabatan_struktural_id"
-                                    name="jabatan_struktural_id"
-                                    value={data.jabatan_struktural_id}
-                                    onChange={(e) =>
-                                        setData(
-                                            "jabatan_struktural_id",
-                                            e.target.value
-                                        )
-                                    }
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                >
-                                    <option value="">
-                                        Tidak Ada Jabatan Struktural
-                                    </option>
-                                    {jabatanStrukturalOptions.map((jabatan) => (
-                                        <option
-                                            key={jabatan.id}
-                                            value={jabatan.id}
-                                        >
-                                            {jabatan.nama_jabatan}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.jabatan_struktural_id && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.jabatan_struktural_id}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-6">
-                                <label
-                                    htmlFor="status"
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                >
-                                    Status:
-                                </label>
-                                <select
-                                    id="status"
-                                    name="status"
-                                    value={data.status}
-                                    onChange={(e) =>
-                                        setData("status", e.target.value)
-                                    }
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    required
-                                >
-                                    <option value="aktif">Aktif</option>
-                                    <option value="nonaktif">Nonaktif</option>
-                                </select>
-                                {errors.status && (
-                                    <p className="text-red-500 text-xs italic">
-                                        {errors.status}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="flex items-center justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={handleCloseModal}
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-                                >
-                                    {processing
-                                        ? "Menyimpan..."
-                                        : modalMode === "add"
-                                        ? "Tambah Pengguna"
-                                        : "Perbarui Pengguna"}
-                                </button>
-                            </div>
-                        </form>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div className="bg-white p-8 rounded-lg shadow-xl max-w-xl w-full mx-4"> {/* DIUBAH: max-w-lg menjadi max-w-xl */}
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800">
+                    {modalMode === "add"
+                        ? "Tambah Pengguna Baru"
+                        : "Edit Pengguna"}
+                </h3>
+                <button
+                    onClick={handleCloseModal}
+                    className="text-gray-500 hover:text-gray-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4"> {/* Menggunakan grid 2 kolom */}
+                    {/* Baris 1: Nama Lengkap */}
+                    <div className="md:col-span-2 mb-2"> {/* Nama Lengkap akan mengambil 2 kolom penuh */}
+                        <label
+                            htmlFor="name"
+                            className="block text-gray-700 text-sm font-bold mb-1" // Mengurangi mb-2 menjadi mb-1 untuk kerapatan
+                        >
+                            Nama Lengkap:
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={data.name}
+                            onChange={(e) => setData("name", e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                            required
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.name}
+                            </p>
+                        )}
                     </div>
+
+                    {/* Baris 2: Username & Password */}
+                    <div className="mb-2"> {/* Kolom 1 dari baris 2 */}
+                        <label
+                            htmlFor="username"
+                            className="block text-gray-700 text-sm font-bold mb-1"
+                        >
+                            Username:
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={data.username}
+                            onChange={(e) =>
+                                setData("username", e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                            required
+                        />
+                        {errors.username && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.username}
+                            </p>
+                        )}
+                    </div>
+                    <div className="mb-2"> {/* Kolom 2 dari baris 2 */}
+                        <label
+                            htmlFor="password"
+                            className="block text-gray-700 text-sm font-bold mb-1"
+                        >
+                            Password:
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                            required={modalMode === "add"}
+                        />
+                        {modalMode === "edit" && (
+                            <p className="text-gray-500 text-xs mt-1">
+                                Biarkan kosong jika tidak ingin mengubah
+                                password.
+                            </p>
+                        )}
+                        {errors.password && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Baris 3: Role & Jabatan Struktural */}
+                    <div className="mb-2"> {/* Kolom 1 dari baris 3 */}
+                        <label
+                            htmlFor="level_user_id"
+                            className="block text-gray-700 text-sm font-bold mb-1"
+                        >
+                            Role:
+                        </label>
+                        <select
+                            id="level_user_id"
+                            name="level_user_id"
+                            value={data.level_user_id}
+                            onChange={(e) =>
+                                setData("level_user_id", e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                            required
+                        >
+                            <option value="">Pilih Role</option>
+                            {roleOptions
+                                .filter((opt) => opt.id !== "all")
+                                .map((role) => (
+                                    <option
+                                        key={role.id}
+                                        value={role.id}
+                                    >
+                                        {role.nama}
+                                    </option>
+                                ))}
+                        </select>
+                        {errors.level_user_id && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.level_user_id}
+                            </p>
+                        )}
+                    </div>
+
+
+                    {/* Baris 4: Status */}
+                    <div className="md:col-span-1 mb-4"> {/* Status mengambil 2 kolom penuh, mb-4 agar tombol tidak terlalu dekat */}
+                        <label
+                            htmlFor="status"
+                            className="block text-gray-700 text-sm font-bold mb-1"
+                        >
+                            Status:
+                        </label>
+                        <select
+                            id="status"
+                            name="status"
+                            value={data.status}
+                            onChange={(e) =>
+                                setData("status", e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                            required
+                        >
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                        {errors.status && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.status}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="md:col-span-2 mb-4"> {/* Kolom 2 dari baris 3 */}
+                        <label
+                            htmlFor="jabatan_struktural_id"
+                            className="block text-gray-700 text-sm font-bold mb-1"
+                        >
+                            Jabatan Struktural (Opsional):
+                        </label>
+                        <select
+                            id="jabatan_struktural_id"
+                            name="jabatan_struktural_id"
+                            value={data.jabatan_struktural_id}
+                            onChange={(e) =>
+                                setData(
+                                    "jabatan_struktural_id",
+                                    e.target.value
+                                )
+                            }
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
+                        > {/* required dihapus karena opsional */}
+                            <option value="">
+                                Tidak Ada Jabatan Struktural
+                            </option>
+                            {jabatanStrukturalOptions.map((jabatan) => (
+                                <option
+                                    key={jabatan.id}
+                                    value={jabatan.id}
+                                >
+                                    {jabatan.nama_jabatan}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.jabatan_struktural_id && (
+                            <p className="text-red-500 text-xs italic">
+                                {errors.jabatan_struktural_id}
+                            </p>
+                        )}
+                    </div>
+                </div> {/* Akhir dari grid */}
+
+                <div className="flex items-center justify-end gap-3 mt-4"> {/* mt-4 untuk jarak dari input terakhir */}
+                    <button
+                        type="button"
+                        onClick={handleCloseModal}
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
+                    >
+                        {processing
+                            ? "Menyimpan..."
+                            : modalMode === "add"
+                            ? "Tambah Pengguna"
+                            : "Perbarui Pengguna"}
+                    </button>
                 </div>
-            )}
+            </form>
+        </div>
+    </div>
+)}
+
         </AdminLayout>
     );
 }

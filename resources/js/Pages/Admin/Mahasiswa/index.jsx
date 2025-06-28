@@ -91,7 +91,7 @@ const MahasiswaFormModal = ({ mahasiswa, onClose, prodiOptions, isEdit }) => {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative border-t-4 border-violet-500"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative"
             >
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
                     {isEdit ? "Edit Mahasiswa" : "Tambah Mahasiswa Baru"}
@@ -215,12 +215,54 @@ const DeleteConfirmModal = ({ mahasiswa, onClose, onConfirm, processing }) => (
     </div>
 );
 
-// --- Komponen Pagination ---
+// --- Komponen Pagination (MODIFIKASI: Tampilan 5 halaman & estetika) ---
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
+
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 4; // Maksimal 5 tombol angka halaman yang terlihat
+        const halfMax = Math.floor(maxPagesToShow / 3);
+
+        let startPage = Math.max(1, currentPage - halfMax);
+        let endPage = Math.min(totalPages, currentPage + halfMax);
+
+        // Menyesuaikan startPage dan endPage jika terlalu dekat dengan ujung
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            if (startPage === 1) {
+                endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            } else if (endPage === totalPages) {
+                startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+            }
+        }
+
+        // Tambahkan tombol halaman
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        // Tambahkan elipsis dan halaman pertama/terakhir jika diperlukan
+        if (startPage > 1) {
+            if (startPage > 2) pageNumbers.unshift('...'); // Elipsis jika ada lebih dari 1 halaman di antara 1 dan startPage
+            pageNumbers.unshift(1); // Selalu tampilkan halaman pertama
+        }
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) pageNumbers.push('...'); // Elipsis jika ada lebih dari 1 halaman di antara endPage dan totalPages
+            pageNumbers.push(totalPages); // Selalu tampilkan halaman terakhir
+        }
+
+        // Gunakan Set untuk menghilangkan duplikasi (misal: jika totalPages <= maxPagesToShow)
+        // Kemudian urutkan kembali (penting karena unshift/push elipsis)
+        return [...new Set(pageNumbers)].sort((a, b) => {
+            if (a === '...') return -1; // Elipsis harus selalu di awal/akhir bloknya
+            if (b === '...') return 1;
+            return a - b;
+        });
+    };
+
     return (
         <nav
-            className="flex items-center justify-center gap-4 mt-6"
+            className="flex items-center justify-center space-x-2 mt-6" // Diubah: gap-4 menjadi space-x-2
             aria-label="Pagination"
         >
             <button
@@ -230,22 +272,26 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             >
                 &laquo; Prev
             </button>
-            <div className="flex items-center gap-2">
-                {[...Array(totalPages).keys()].map((num) => (
-                    <button
-                        key={num + 1}
-                        onClick={() => onPageChange(num + 1)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-2xl text-base font-bold transition-all duration-300 transform hover:scale-105 ${
-                            currentPage === num + 1
-                                ? "bg-violet-600 text-white shadow-lg"
-                                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-                        }`}
-                        aria-current={
-                            currentPage === num + 1 ? "page" : undefined
-                        }
-                    >
-                        {num + 1}
-                    </button>
+            <div className="flex items-center space-x-2"> {/* Diubah: gap-2 menjadi space-x-2 */}
+                {getPageNumbers().map((num, index) => (
+                    num === '...' ? (
+                        <span key={index} className="flex items-center justify-center text-gray-500"></span> // Menambahkan kembali '...'
+                    ) : (
+                        <button
+                            key={num}
+                            onClick={() => onPageChange(num)}
+                            className={`w-10 h-10 flex items-center justify-center rounded-2xl text-base font-bold transition-all duration-300 transform hover:scale-105 ${
+                                currentPage === num
+                                    ? 'bg-violet-600 text-white shadow-lg' // Menambahkan scale-105 untuk efek hover
+                                    : 'bg-white text-gray-700 hover:text-violet-600' // Diubah: border dihilangkan, bg-white menjadi bg-gray-100
+                            }`}
+                            aria-current={
+                                currentPage === num ? "page" : undefined
+                            }
+                        >
+                            {num}
+                        </button>
+                    )
                 ))}
             </div>
             <button
@@ -258,6 +304,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         </nav>
     );
 };
+
 
 // --- Komponen Utama KelolaMahasiswa ---
 export default function KelolaMahasiswa({
@@ -277,6 +324,7 @@ export default function KelolaMahasiswa({
 
     // -- DEFINISI handlePageChange yang hilang, KINI DITAMBAHKAN KEMBALI --
     const handlePageChange = (page) => {
+        // Pastikan halaman yang diminta valid sebelum update currentPage
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
@@ -405,19 +453,19 @@ export default function KelolaMahasiswa({
                     <table className="min-w-full">
                         <thead className="bg-purple-100">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th style={{ width: '5%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                     NIM
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th style={{ width: '25%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                     Nama
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th style={{ width: '30%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                     Prodi
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th style={{ width: '30%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                     Jurusan
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th style={{ width: '5%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                     Aksi
                                 </th>
                             </tr>
@@ -428,19 +476,19 @@ export default function KelolaMahasiswa({
                                     key={mhs.id}
                                     className="hover:bg-gray-50/50"
                                 >
-                                    <td className="px-6 py-4 text-gray-600">
+                                    <td style={{ width: '15%' }} className="px-6 py-4 text-gray-600">
                                         {mhs.nim}
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600 font-medium">
+                                    <td style={{ width: '30%' }} className="px-6 py-4 text-gray-600 font-medium">
                                         {mhs.nama}
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600">
+                                    <td style={{ width: '25%' }} className="px-6 py-4 text-gray-600">
                                         {mhs.prodi}
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600">
+                                    <td style={{ width: '20%' }} className="px-6 py-4 text-gray-600">
                                         {mhs.jurusan}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td style={{ width: '10%' }} className="px-6 py-4">
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 onClick={() =>
@@ -493,7 +541,7 @@ export default function KelolaMahasiswa({
                             {filteredMahasiswa.length === 0 && (
                                 <tr>
                                     <td
-                                        colSpan={6}
+                                        colSpan={5} // Jumlah kolom adalah 5 (NIM, Nama, Prodi, Jurusan, Aksi)
                                         className="text-center py-10 text-gray-400"
                                     >
                                         Data mahasiswa tidak ditemukan.

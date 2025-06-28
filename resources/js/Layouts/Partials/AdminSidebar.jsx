@@ -21,17 +21,21 @@ export default function AdminSidebar() {
     const iconClass = "w-5 h-5 mr-3"; // Sesuaikan jika perlu, FaIcons mungkin punya ukuran intrinsik
 
     return (
-        <aside className="sidebar min-h-screen bg-gradient-to-b from-violet-400 via-violet-500 to-violet-800 p-6 flex flex-col justify-between rounded-[22px] w-[260px]">
+        <aside className="sidebar min-h-screen bg-gradient-to-b from-violet-700 via-violet-500 to-violet-900 p-6 flex flex-col justify-between rounded-[0px] w-[260px]">
             <div>
                 <div className="text-center mb-10">
-                    <div className="w-24 h-24 mx-auto mb-4 rounded-full border-4 border-violet-200 flex items-center justify-center text-white text-2xl font-bold bg-gradient-to-b from-violet-300 to-violet-500 shadow-inner select-none">
-                        A
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-1">
-                        Sistem Surat
-                    </h3>
-                    <p className="text-sm text-violet-200">Administrator</p>
-                </div>
+
+    <img
+        src="https://polmed.ac.id/wp-content/uploads/2014/04/logo-polmed-png.png"
+        alt="Logo Sistem Surat"
+        className="w-24 h-24 mx-auto mb-4 object-contain"
+        onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/96x96/CCCCCC/333333?text=Error" }}
+    />
+    <h3 className="text-2xl font-bold text-white mb-1">
+        Sistem Surat
+    </h3>
+    <p className="text-sm text-violet-200">Administrator</p>
+</div>
                 <nav>
                     {/* Link ke Dashboard Admin - Menggunakan FaTachometerAlt untuk ikon dashboard */}
                     <Link

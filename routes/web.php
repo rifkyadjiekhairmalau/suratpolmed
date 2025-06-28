@@ -20,8 +20,9 @@ use App\Http\Controllers\MahasiswaController;
 
 // RUTE HALAMAN UTAMA (HOMEPAGE)
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    return redirect()->route('login'); // Mengarahkan ke rute 'login'
 })->name('home');
+
 
 // --- ROUTE UNTUK TESTING (BISA DIHAPUS NANTI) ---
 // Ini akan digantikan oleh rute dashboard spesifik per level
@@ -43,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rute Dashboard Umum: Mengarahkan ke dashboard spesifik sesuai level user
      Route::get('/dashboard', function (Request $request) {
         $userLevel = $request->user()->levelUser->nama_level ?? null; // Asumsi relasi levelUser
-        
+
         switch ($userLevel) {
             case 'administrator': return redirect()->route('admin.dashboard');
             case 'mahasiswa': return redirect()->route('mahasiswa.dashboard');

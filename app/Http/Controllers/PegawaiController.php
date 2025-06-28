@@ -6,15 +6,12 @@ use App\Models\Pegawai;
 use App\Models\Jabatan;
 use App\Models\JabatanStruktural;
 use App\Models\JenisPegawai;
-use App\Models\User; // Pastikan model User sudah diimpor
-use App\Models\LevelUser; // Pastikan model LevelUser sudah diimpor
+use App\Models\User;
+use App\Models\LevelUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Pastikan Hash facade sudah diimpor
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-// use Illuminate\Support\Facades\DB; // Dihapus untuk mengikuti gaya MahasiswaController yang tidak pakai transaksi eksplisit
-// use Illuminate\Support\Facades\Log; // Dihapus karena MahasiswaController tidak menggunakannya untuk ini
 use Inertia\Inertia;
-// use Throwable; // Dihapus karena MahasiswaController tidak menggunakannya untuk ini
 
 class PegawaiController extends Controller
 {
@@ -35,14 +32,16 @@ class PegawaiController extends Controller
                         'nama' => $pegawai->nama,
                         'gelar_belakang' => $pegawai->gelar_belakang,
                         'tempat_lahir' => $pegawai->tempat_lahir,
-                        // 'tgl_lahir' => $pegawai->tgl_lahir, // Sudah dihilangkan
+                        'tgl_lahir' => $pegawai->tgl_lahir, // Tetap diaktifkan untuk detail modal jika diperlukan
                         'email' => $pegawai->email,
                         'jabatan_id' => $pegawai->jabatan_id,
                         'jabatan_struktural_id' => $pegawai->jabatan_struktural_id,
                         'jenis_pegawai_id' => $pegawai->jenis_pegawai_id,
-                        'jabatan' => $pegawai->jabatan->nama_jabatan ?? '-',
-                        'jabatan_struktural' => $pegawai->jabatanStruktural->jabatan_struktural ?? '-',
-                        'jenis_pegawai' => $pegawai->jenisPegawai->jenis_pegawai ?? '-',
+                        // Mengirimkan objek relasi secara langsung
+                        // Frontend akan mengakses properti dari objek ini (contoh: pegawai.jabatan.nama_jabatan)
+                        'jabatan' => $pegawai->jabatan,
+                        'jabatan_struktural' => $pegawai->jabatanStruktural,
+                        'jenis_pegawai' => $pegawai->jenisPegawai,
                     ];
                 }),
             'jabatanOptions' => Jabatan::orderBy('nama_jabatan')->get()->map(function ($jabatan) {
@@ -81,6 +80,7 @@ class PegawaiController extends Controller
             'nama' => 'required|string|max:100',
             'gelar_belakang' => 'nullable|string|max:50',
             'tempat_lahir' => 'required|string|max:100',
+            'tgl_lahir' => 'nullable|date', // DIUBAH: Sekarang opsional
             'email' => 'required|email|max:100',
             'jabatan_id' => 'required|exists:jabatan,id',
             'jabatan_struktural_id' => 'nullable|exists:jabatan_struktural,id',
@@ -96,7 +96,7 @@ class PegawaiController extends Controller
         // 2. Buat Data User untuk Pegawai ini
         $levelPegawai = LevelUser::where('nama_level', 'pegawai')->first();
         // Fallback untuk level_user_id, mirip MahasiswaController
-        $levelUserIdPegawai = $levelPegawai ? $levelPegawai->id : 3; // Default ke 2 jika 'pegawai' tidak ditemukan
+        $levelUserIdPegawai = $levelPegawai ? $levelPegawai->id : 3; // Default ke 3 jika 'pegawai' tidak ditemukan (sesuaikan jika ada level lain)
 
         User::create([
             'username' => $pegawai->nip,
@@ -124,6 +124,7 @@ class PegawaiController extends Controller
             'nama' => 'required|string|max:100',
             'gelar_belakang' => 'nullable|string|max:50',
             'tempat_lahir' => 'required|string|max:100',
+            'tgl_lahir' => 'nullable|date', // DIUBAH: Sekarang opsional
             'email' => 'required|email|max:100',
             'jabatan_id' => 'required|exists:jabatan,id',
             'jabatan_struktural_id' => 'nullable|exists:jabatan_struktural,id',
