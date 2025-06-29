@@ -28,12 +28,42 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
-    $request->session()->regenerate();
+    {
+        $request->authenticate();
+        $request->session()->regenerate();
 
-    return redirect()->route('admin.dashboard');
-}
+        // Ambil level user yang login
+        $level = Auth::user()->levelUser->nama_level ?? null;
+
+        // Redirect berdasarkan level user
+        switch ($level) {
+            case 'mahasiswa':
+            case 'pegawai':
+                // Langsung ke halaman pengajuan surat (tanpa dashboard terpisah)
+                return redirect()->route('pengaju.suratmasuk.index');
+
+            case 'administrator':
+                return redirect()->route('admin.dashboard');
+
+            case 'administrasi umum':
+                return redirect()->route('administrasi_umum.dashboard');
+
+            case 'direktur':
+                return redirect()->route('direktur.dashboard');
+
+            case 'wakil direktur':
+                return redirect()->route('wakil_direktur.dashboard');
+
+            case 'kepala bagian':
+                return redirect()->route('kepala_bagian.dashboard');
+
+            case 'kepala sub bagian':
+                return redirect()->route('kepala_sub_bagian.dashboard');
+
+            default:
+                abort(403, 'Akses tidak diizinkan.');
+        }
+    }
 
     /**
      * Destroy an authenticated session.

@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\SuratMasukController;
 
 
 /*
@@ -42,22 +43,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rute Dashboard Umum: Mengarahkan ke dashboard spesifik sesuai level user
-     Route::get('/dashboard', function (Request $request) {
-        $userLevel = $request->user()->levelUser->nama_level ?? null; // Asumsi relasi levelUser
+Route::get('/dashboard', function (Request $request) {
+    $userLevel = $request->user()->levelUser->nama_level ?? null;
 
-        switch ($userLevel) {
-            case 'administrator': return redirect()->route('admin.dashboard');
-            case 'mahasiswa': return redirect()->route('mahasiswa.dashboard');
-            case 'pegawai': return redirect()->route('pegawai.dashboard');
-            case 'administrasi umum': return redirect()->route('administrasi_umum.dashboard');
-            case 'direktur': return redirect()->route('direktur.dashboard');
-            case 'wakil direktur': return redirect()->route('wakil_direktur.dashboard');
-            case 'kepala bagian': return redirect()->route('kepala_bagian.dashboard');
-            case 'kepala sub bagian': return redirect()->route('kepala_sub_bagian.dashboard');
-            default: return Inertia::render('Welcome'); // Halaman default jika level tidak dikenal
-        }
-    })->name('dashboard');
-});
+    switch ($userLevel) {
+        case 'administrator':
+            return redirect()->route('admin.dashboard');
+        case 'mahasiswa':
+        case 'pegawai':
+            return redirect()->route('pengaju.suratmasuk.index'); // Ganti di sini
+        case 'administrasi umum':
+            return redirect()->route('administrasi_umum.dashboard');
+        case 'direktur':
+            return redirect()->route('direktur.dashboard');
+        case 'wakil direktur':
+            return redirect()->route('wakil_direktur.dashboard');
+        case 'kepala bagian':
+            return redirect()->route('kepala_bagian.dashboard');
+        case 'kepala sub bagian':
+            return redirect()->route('kepala_sub_bagian.dashboard');
+        default:
+            return Inertia::render('Welcome');
+    }
+})->name('dashboard');
 
 
 // ========================================================================
@@ -89,6 +97,18 @@ Route::middleware(['auth', 'verified', 'level:administrator'])->prefix('admin')-
     Route::put('/pegawai/{id}', [PegawaiController::class, 'update'])->name('pegawai.update');
     Route::delete('/pegawai/{id}', [PegawaiController::class, 'destroy'])->name('pegawai.destroy');
 
+});
+
+}); // <-- Tambahkan penutup group middleware utama di sini
+
+// ========================================================================
+// GROUP ROUTE UNTUK MAHASISWA DAN PEGAWAI
+// ========================================================================
+
+Route::middleware(['auth', 'verified', 'level:mahasiswa,pegawai'])->prefix('pengaju')->name('pengaju.')->group(function () {
+    Route::get('suratmasuk', [SuratMasukController::class, 'index'])->name('suratmasuk.index');
+    Route::post('suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
+    Route::put('suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
 });
 
 
