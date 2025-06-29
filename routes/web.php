@@ -8,6 +8,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\AdminBagianUmumController;
 
 
 /*
@@ -109,6 +110,28 @@ Route::middleware(['auth', 'verified', 'level:mahasiswa,pegawai'])->prefix('peng
     Route::get('suratmasuk', [SuratMasukController::class, 'index'])->name('suratmasuk.index');
     Route::post('suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
     Route::put('suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
+});
+
+// ========================================================================
+// >>>>>>> GROUP ROUTE UNTUK ADMINISTRASI UMUM (ADMIN BAGIAN UMUM) <<<<<<<
+// ========================================================================
+Route::middleware(['auth', 'verified', 'level:administrasi umum'])->prefix('administrasi-umum')->name('administrasi_umum.')->group(function () {
+
+    // Dashboard Admin Bagian Umum (akan menampilkan statistik DAN daftar surat belum verifikasi)
+    Route::get('dashboard', [AdminBagianUmumController::class, 'dashboard'])->name('dashboard');
+
+    // Rute Aksi Verifikasi dan Penolakan Surat Masuk
+    Route::post('suratmasuk/{suratMasuk}/verify', [AdminBagianUmumController::class, 'verify'])->name('suratmasuk.verify');
+    Route::post('suratmasuk/{suratMasuk}/reject', [AdminBagianUmumController::class, 'reject'])->name('suratmasuk.reject');
+
+    // Daftar Surat Masuk yang Sudah Terverifikasi (halaman terpisah dari dashboard)
+    Route::get('suratmasuk/terverifikasi', [AdminBagianUmumController::class, 'verifiedSuratMasukIndex'])->name('suratmasuk.terverifikasi.index');
+
+    // CRUD Surat Keluar
+    Route::get('suratkeluar', [AdminBagianUmumController::class, 'suratKeluarIndex'])->name('suratkeluar.index');
+    Route::post('suratkeluar', [AdminBagianUmumController::class, 'suratKeluarStore'])->name('suratkeluar.store');
+    Route::put('suratkeluar/{suratKeluar}', [AdminBagianUmumController::class, 'suratKeluarUpdate'])->name('suratkeluar.update');
+    Route::delete('suratkeluar/{suratKeluar}', [AdminBagianUmumController::class, 'suratKeluarDestroy'])->name('suratkeluar.destroy');
 });
 
 

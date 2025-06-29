@@ -1,0 +1,286 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SuratMasuk;
+use App\Models\SuratKeluar;
+use App\Models\StatusSurat;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+
+class AdminBagianUmumController extends Controller
+{
+    /**
+     * Menampilkan dashboard Admin Bagian Umum dengan statistik
+     * dan daftar surat yang belum diverifikasi.
+     *
+     * @return \Inertia\Response
+     */
+    public function dashboard()
+    {
+        // Hitung total surat masuk
+        $totalSuratMasuk = SuratMasuk::count();
+
+        // Hitung total surat keluar
+        $totalSuratKeluar = SuratKeluar::count();
+
+        // Ambil ID status 'verifikasi'
+        $statusVerifikasiId = StatusSurat::where('kode', 'verifikasi')->value('id');
+
+        // Hitung jumlah surat yang belum diverifikasi
+        // PERBAIKAN: Menggunakan whereRaw dengan alias eksplisit untuk korelasi
+        $suratBelumVerifikasiCount = SuratMasuk::whereHas('tracking', function ($query) use ($statusVerifikasiId) {
+            $query->where('status_surat_id', $statusVerifikasiId)
+                  ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
+        })->count();
+
+        // Mengambil daftar surat masuk yang belum diverifikasi (status terakhir 'verifikasi')
+        // PERBAIKAN: Menggunakan whereRaw dengan alias eksplisit untuk korelasi
+        $suratUntukVerifikasi = SuratMasuk::with([
+            'jenisSurat', 'urgensi', 'tujuan', 'tujuan.jabatanStruktural', 'pengaju',
+            'tracking' => function ($query) { $query->latest(); }, // Memastikan entri tracking terbaru selalu di paling atas
+            'tracking.status', 'tracking.user', 'tracking.dariUser', 'tracking.keUser',
+        ])
+        ->whereHas('tracking', function ($query) use ($statusVerifikasiId) {
+            $query->where('status_surat_id', $statusVerifikasiId)
+                  ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
+        })
+        ->orderByDesc('created_at')
+        ->get();
+
+        return Inertia::render('AdminBagianUmum/Dashboard', [
+            'totalSuratMasuk' => $totalSuratMasuk,
+            'totalSuratKeluar' => $totalSuratKeluar,
+            'suratBelumVerifikasiCount' => $suratBelumVerifikasiCount,
+            'suratUntukVerifikasi' => $suratUntukVerifikasi,
+            'adminUser' => Auth::user(),
+        ]);
+    }
+
+    /**
+     * Memproses verifikasi surat oleh Admin Bagian Umum.
+     * Mengubah status surat menjadi 'disposisi' dan mencatatnya di tracking.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SuratMasuk  $suratMasuk Model SuratMasuk yang akan diverifikasi (route model binding)
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function verify(Request $request, SuratMasuk $suratMasuk)
+    {
+        $adminUser = Auth::user();
+
+        // Opsional: Validasi apakah surat memang dalam status 'verifikasi'
+        $latestTracking = $suratMasuk->tracking()->latest()->first();
+        if (!$latestTracking || $latestTracking->status->kode !== 'verifikasi') {
+            return redirect()->back()->with('error', 'Surat tidak dalam status untuk diverifikasi.');
+        }
+
+        // Mendapatkan objek StatusSurat untuk 'disposisi'
+        $statusDisposisi = StatusSurat::where('kode', 'disposisi')->first();
+
+        if ($statusDisposisi) {
+            // Membuat entri tracking baru untuk mencatat verifikasi
+            $suratMasuk->tracking()->create([
+                'status_surat_id' => $statusDisposisi->id, // Status berubah menjadi 'disposisi'
+                'catatan' => 'Surat diverifikasi oleh Bagian Umum, menunggu disposisi pejabat.',
+                'user_id' => $adminUser->id, // User yang memverifikasi (Admin Bagian Umum)
+                'dari_user_id' => $adminUser->id, // Dari Admin Bagian Umum
+                'ke_user_id' => $suratMasuk->tujuan_user_id, // Ke Pejabat yang dituju surat
+            ]);
+        } else {
+            return redirect()->back()->with('error', 'Status "disposisi" tidak ditemukan di database.');
+        }
+
+        // Redirect kembali ke dashboard (karena daftar verifikasi ada di dashboard sekarang)
+        return redirect()->route('administrasi_umum.dashboard')->with('success', 'Surat berhasil diverifikasi dan diteruskan ke pejabat.');
+    }
+
+    /**
+     * Memproses penolakan surat oleh Admin Bagian Umum.
+     * Mengubah status surat menjadi 'ditolak' dan mencatatnya di tracking.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SuratMasuk  $suratMasuk Model SuratMasuk yang akan ditolak (route model binding)
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function reject(Request $request, SuratMasuk $suratMasuk)
+    {
+        // Validasi catatan penolakan
+        $request->validate([
+            'catatan_penolakan' => 'required|string|max:500',
+        ]);
+
+        $adminUser = Auth::user();
+
+        // Opsional: Validasi apakah surat memang dalam status 'verifikasi'
+        $latestTracking = $suratMasuk->tracking()->latest()->first();
+        if (!$latestTracking || $latestTracking->status->kode !== 'verifikasi') {
+            return redirect()->back()->with('error', 'Surat tidak dalam status untuk ditolak verifikasi.');
+        }
+
+        // Mendapatkan objek StatusSurat untuk 'ditolak'
+        $statusDitolak = StatusSurat::where('kode', 'ditolak')->first();
+
+        if ($statusDitolak) {
+            // Membuat entri tracking baru untuk mencatat penolakan
+            $suratMasuk->tracking()->create([
+                'status_surat_id' => $statusDitolak->id, // Status berubah menjadi 'ditolak'
+                'catatan' => 'Surat ditolak oleh Bagian Umum: ' . $request->catatan_penolakan,
+                'user_id' => $adminUser->id, // User yang menolak (Admin Bagian Umum)
+                'dari_user_id' => $adminUser->id, // Dari Admin Bagian Umum
+                'ke_user_id' => $suratMasuk->pengaju_user_id, // Dikembalikan ke pengaju surat
+            ]);
+        } else {
+            return redirect()->back()->with('error', 'Status "ditolak" tidak ditemukan di database.');
+        }
+
+        // Redirect kembali ke dashboard (karena daftar verifikasi ada di dashboard sekarang)
+        return redirect()->route('administrasi_umum.dashboard')->with('success', 'Surat berhasil ditolak.');
+    }
+
+    /**
+     * Menampilkan daftar surat masuk yang sudah diverifikasi oleh Admin Bagian Umum.
+     *
+     * @return \Inertia\Response
+     */
+    public function verifiedSuratMasukIndex()
+    {
+        // PERBAIKAN DI SINI UNTUK whereHas: Mengubah where menjadi whereIn
+        $suratMasukTerverifikasi = SuratMasuk::with([
+            'jenisSurat', 'urgensi', 'tujuan', 'tujuan.jabatanStruktural', 'pengaju',
+            'tracking' => function ($query) { $query->latest(); },
+            'tracking.status', 'tracking.user', 'tracking.dariUser', 'tracking.keUser',
+        ])
+        ->whereHas('tracking', function ($query) {
+            // >>>>> PERUBAHAN PENTING DI SINI <<<<<
+            $query->whereIn('status_surat_id', function ($subQuery) { // Menggunakan whereIn
+                $subQuery->select('id')
+                         ->from('status_surat')
+                         ->where('kode', '!=', 'verifikasi') // Kecualikan yang belum diverifikasi
+                         ->where('kode', '!=', 'ditolak'); // Kecualikan yang ditolak
+            })
+            ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
+        })
+        ->orderByDesc('created_at')
+        ->get();
+
+        return Inertia::render('AdminBagianUmum/SuratMasuk/Terverifikasi', [
+            'suratMasuk' => $suratMasukTerverifikasi,
+            'adminUser' => Auth::user(),
+        ]);
+    }
+
+    /**
+     * Menampilkan daftar surat keluar.
+     *
+     * @return \Inertia\Response
+     */
+    public function suratKeluarIndex()
+    {
+        $suratKeluar = SuratKeluar::with('pengirim')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return Inertia::render('AdminBagianUmum/SuratKeluar/Index', [
+            'suratKeluar' => $suratKeluar,
+            'adminUser' => Auth::user(),
+        ]);
+    }
+
+    /**
+     * Menyimpan surat keluar baru.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function suratKeluarStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'nomor_surat' => 'nullable|string|max:100',
+            'perihal_surat' => 'required|string|max:255',
+            'tanggal_keluar' => 'required|date_format:Y-m-d',
+            'tujuan' => 'required|string|max:255',
+            'keterangan_tambahan' => 'nullable|string|max:500',
+            'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+        ]);
+
+        $tahun = now()->year;
+        $jumlahTahunIni = SuratKeluar::whereYear('created_at', $tahun)->count() + 1;
+        $nomorAgenda = $jumlahTahunIni . '/' . $tahun;
+
+        $filePath = null;
+        if ($request->hasFile('file_surat')) {
+            $filePath = $request->file('file_surat')->store('surat_keluar_files', 'public');
+        }
+
+        SuratKeluar::create([
+            'nomor_agenda' => $nomorAgenda,
+            'nomor_surat' => $request->nomor_surat,
+            'perihal_surat' => $request->perihal_surat,
+            'tanggal_keluar' => $request->tanggal_keluar,
+            'tujuan' => $request->tujuan,
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'file_surat' => $filePath,
+            'pengirim_user_id' => $user->id,
+        ]);
+
+        return redirect()->route('administrasi_umum.suratkeluar.index')->with('success', 'Surat Keluar berhasil ditambahkan!');
+    }
+
+    /**
+     * Memperbarui surat keluar.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SuratKeluar  $suratKeluar
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function suratKeluarUpdate(Request $request, SuratKeluar $suratKeluar)
+    {
+        $request->validate([
+            'nomor_surat' => 'nullable|string|max:100',
+            'perihal_surat' => 'required|string|max:255',
+            'tanggal_keluar' => 'required|date_format:Y-m-d',
+            'tujuan' => 'required|string|max:255',
+            'keterangan_tambahan' => 'nullable|string|max:500',
+            'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($request->hasFile('file_surat')) {
+            if ($suratKeluar->file_surat) {
+                Storage::disk('public')->delete($suratKeluar->file_surat);
+            }
+            $suratKeluar->file_surat = $request->file('file_surat')->store('surat_keluar_files', 'public');
+        }
+
+        $suratKeluar->update([
+            'nomor_surat' => $request->nomor_surat,
+            'perihal_surat' => $request->perihal_surat,
+            'tanggal_keluar' => $request->tanggal_keluar,
+            'tujuan' => $request->tujuan,
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'file_surat' => $suratKeluar->file_surat,
+        ]);
+
+        return redirect()->route('administrasi_umum.suratkeluar.index')->with('success', 'Surat Keluar berhasil diperbarui!');
+    }
+
+    /**
+     * Menghapus surat keluar.
+     *
+     * @param  \App\Models\SuratKeluar  $suratKeluar
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function suratKeluarDestroy(SuratKeluar $suratKeluar)
+    {
+        if ($suratKeluar->file_surat) {
+            Storage::disk('public')->delete($suratKeluar->file_surat);
+        }
+        $suratKeluar->delete();
+
+        return redirect()->route('administrasi_umum.suratkeluar.index')->with('success', 'Surat Keluar berhasil dihapus!');
+    }
+}
