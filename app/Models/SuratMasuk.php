@@ -48,6 +48,7 @@ class SuratMasuk extends Model
 
     public function tracking()
     {
-        return $this->hasMany(TrackingSurat::class);
+        // Ubah ini menjadi latest() atau orderByDesc('created_at')
+        return $this->hasMany(TrackingSurat::class)->latest(); // ATAU ->orderByDesc('created_at');
     }
 }
