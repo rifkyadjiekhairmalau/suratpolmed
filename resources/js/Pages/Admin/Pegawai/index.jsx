@@ -25,7 +25,7 @@ const DetailPegawaiModal = ({ pegawai, onClose }) => {
                     <DetailItem label="Nama Lengkap" value={`${pegawai.gelar_depan || ''} ${pegawai.nama} ${pegawai.gelar_belakang || ''}`.trim()} />
                     <DetailItem label="NIP" value={pegawai.nip} />
                     <DetailItem label="Email" value={pegawai.email} />
-                    <DetailItem label="Tempat Lahir" value={pegawai.tempat_lahir} />
+                    <DetailItem label="Tempat & Tanggal Lahir" value={pegawai.tempat_lahir} />
                     {/* Baris Tanggal Lahir dihilangkan sesuai permintaan */}
                     {/* <DetailItem label="Tanggal Lahir" value={formattedTglLahir} /> */}
                     <DetailItem label="Jabatan Fungsional" value={pegawai.jabatan?.nama_jabatan || '-'} />
@@ -236,14 +236,14 @@ const PegawaiFormModal = ({
                     </div>
                     <div>
                         <label className={labelStyle}>Email</label>
-                        <input type="email" name="email" value={data.email} onChange={(e) => setData("email", e.target.value)} className={inputStyle} required />
+                        <input type="email" name="email" value={data.email} onChange={(e) => setData("email", e.target.value)} className={inputStyle} placeholder="Cth : admin@polmed.ac.id" required />
                         {errors.email && <div className="text-red-500 text-sm mt-1">{errors.email}</div>}
                     </div>
 
                     {/* Tempat Lahir & Tanggal Lahir */}
                     <div>
-                        <label className={labelStyle}>Tempat Lahir</label>
-                        <input type="text" name="tempat_lahir" value={data.tempat_lahir} onChange={(e) => setData("tempat_lahir", e.target.value)} className={inputStyle} required />
+                        <label className={labelStyle}>Tempat & Tanggal Lahir</label>
+                        <input type="text" name="tempat_lahir" value={data.tempat_lahir} onChange={(e) => setData("tempat_lahir", e.target.value)} className={inputStyle} placeholder="Medan, 07 Juli 2025" required />
                         {errors.tempat_lahir && <div className="text-red-500 text-sm mt-1">{errors.tempat_lahir}</div>}
                     </div>
 
@@ -375,6 +375,7 @@ export default function KelolaPegawai({
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Ya, hapus!",
+            confirmButtonColor: "#d33",
         }).then((result) => {
             if (result.isConfirmed) {
                 destroy(route("admin.pegawai.destroy", id), {
@@ -430,13 +431,13 @@ export default function KelolaPegawai({
                 <div className="overflow-x-auto">
                     <table className="w-full whitespace-nowrap">
                         <thead>
-                            <tr className="bg-purple-100 text-left text-sm font-semibold text-gray-700">
-                                <th className="px-4 py-2">NIP</th>
-                                <th className="px-4 py-2">Gelar Depan</th>
-                                <th className="px-4 py-2">Nama</th>
-                                <th className="px-4 py-2">Gelar Belakang</th>
-                                <th className="px-4 py-2">Jabatan Struktural</th>
-                                <th className="px-4 py-2">Aksi</th>
+                            <tr className="bg-purple-100 text-left text-xs font-bold text-black-600">
+                                <th className="px-6 py-3">NIP</th>
+                                <th className="px-6 py-3">Gelar Depan</th>
+                                <th className="px-6 py-3">Nama</th>
+                                <th className="px-6 py-3">Gelar Belakang</th>
+                                <th className="px-6 py-3">Jabatan Struktural</th>
+                                <th className="px-6 py-3">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -455,7 +456,7 @@ export default function KelolaPegawai({
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" /></svg>
                                             </button>
 
-                                            <button onClick={() => handleOpenModal("form", p)} className="p-2 text-amber-600 hover:bg-amber-100 rounded-full" title="Edit">
+                                            <button onClick={() => handleOpenModal("form", p)} className="p-2 text-amber-600 hover:bg-amber-100 rounded-full" title="Edit Pegawai">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
                                             </button>
 

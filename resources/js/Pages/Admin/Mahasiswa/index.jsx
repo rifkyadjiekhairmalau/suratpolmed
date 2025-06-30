@@ -91,7 +91,7 @@ const MahasiswaFormModal = ({ mahasiswa, onClose, prodiOptions, isEdit }) => {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 relative"
             >
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
                     {isEdit ? "Edit Mahasiswa" : "Tambah Mahasiswa Baru"}
@@ -317,7 +317,7 @@ export default function KelolaMahasiswa({
     const [selectedMahasiswa, setSelectedMahasiswa] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 7;
+    const ITEMS_PER_PAGE = 5;
 
     // Gunakan useForm hanya untuk operasi delete di komponen ini
     const { delete: destroy, processing: deleteProcessing } = useForm();
@@ -418,14 +418,14 @@ export default function KelolaMahasiswa({
 
     return (
         <AdminLayout>
-            <Head title="Manajemen Akun Mahasiswa" />
+            <Head title="Manajemen Mahasiswa" />
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800">
-                        Manajemen Akun Mahasiswa
+                        Manajemen Mahasiswa
                     </h1>
                     <p className="text-gray-500 mt-1">
-                        Tambah, edit, atau hapus data akun mahasiswa.
+                        Tambah, edit, atau hapus data mahasiswa.
                     </p>
                 </div>
                 <button
@@ -494,7 +494,7 @@ export default function KelolaMahasiswa({
                                                 onClick={() =>
                                                     handleOpenModal("edit", mhs)
                                                 }
-                                                className="p-2 text-blue-600 hover:bg-blue-100 rounded-full"
+                                                className="p-2 text-amber-600 hover:bg-amber-100 rounded-full"
                                                 title="Edit"
                                             >
                                                 <svg

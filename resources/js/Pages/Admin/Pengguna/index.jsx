@@ -138,6 +138,7 @@ export default function Pengguna({
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Ya, Ubah Status!",
+            confirmButtonColor: "#d33",
             cancelButtonText: "Batal",
         }).then((result) => {
             if (result.isConfirmed) {
@@ -198,7 +199,7 @@ export default function Pengguna({
                     onClick={() => handleOpenModal("add")}
                     className="px-5 py-2 bg-violet-600 text-white rounded-lg font-semibold hover:bg-violet-700 transition shadow-sm hover:shadow-md w-full md:w-auto"
                 >
-                    Tambah Pengguna Baru
+                    Tambah Pengguna
                 </button>
             </div>
 
@@ -220,7 +221,7 @@ export default function Pengguna({
                             setRoleFilter(e.target.value);
                             setCurrentPage(1);
                         }}
-                        className="w-full md:w-fit border border-gray-300 rounded-lg px-4 py-2.5 min-w-[150px] focus:ring-2 focus:ring-violet-400"
+                        className="w-full md:w-fit border border-gray-300 rounded-xl px-3 py-2.5 min-w-[220px] focus:ring-2 focus:ring-violet-400 text-left"
                     >
                         <option value="Semua Role">Semua Role</option>
                         {roleOptions
@@ -300,24 +301,19 @@ export default function Pengguna({
                                                             user
                                                         )
                                                     }
-                                                    className="text-blue-600 hover:underline px-2 py-1 rounded"
+                                                    className="p-2 text-amber-600 hover:bg-amber-100 rounded-full"
                                                     title="Edit Pengguna"
                                                 >
                                                     {/* Edit Icon */}
                                                     <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        className="h-5 w-5"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.828-2.829z" />
+                                                        xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
                                                     </svg>
                                                 </button>
                                                 <button
                                                     onClick={() =>
                                                         handleToggleStatus(user)
                                                     }
-                                                    className={`px-2 py-1 rounded ${
+                                                    className={`p-2  hover:bg-red-100 rounded-full ${
                                                         user.status === "Aktif"
                                                             ? "text-red-600 hover:underline"
                                                             : "text-green-600 hover:underline"
@@ -518,6 +514,7 @@ export default function Pengguna({
                             type="password"
                             id="password"
                             name="password"
+                            placeholder="Min 8 characters"
                             value={data.password}
                             onChange={(e) =>
                                 setData("password", e.target.value)
