@@ -13,8 +13,6 @@ const MahasiswaFormModal = ({ mahasiswa, onClose, prodiOptions, isEdit }) => {
         prodi_id: mahasiswa?.prodi_id || prodiOptions[0]?.id || "", // Pastikan prodi_id ada di props mahasiswa
     });
 
-    // Efek untuk mereset form data saat modal dibuka atau beralih mode edit/tambah
-    // Ini penting agar form menampilkan data yang benar saat diedit atau bersih saat ditambah
     useEffect(() => {
         setData({
             nim: mahasiswa?.nim || "",
@@ -243,19 +241,19 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
         // Tambahkan elipsis dan halaman pertama/terakhir jika diperlukan
         if (startPage > 1) {
-            if (startPage > 2) pageNumbers.unshift('...'); // Elipsis jika ada lebih dari 1 halaman di antara 1 dan startPage
+            if (startPage > 2) pageNumbers.unshift("..."); // Elipsis jika ada lebih dari 1 halaman di antara 1 dan startPage
             pageNumbers.unshift(1); // Selalu tampilkan halaman pertama
         }
         if (endPage < totalPages) {
-            if (endPage < totalPages - 1) pageNumbers.push('...'); // Elipsis jika ada lebih dari 1 halaman di antara endPage dan totalPages
+            if (endPage < totalPages - 1) pageNumbers.push("..."); // Elipsis jika ada lebih dari 1 halaman di antara endPage dan totalPages
             pageNumbers.push(totalPages); // Selalu tampilkan halaman terakhir
         }
 
         // Gunakan Set untuk menghilangkan duplikasi (misal: jika totalPages <= maxPagesToShow)
         // Kemudian urutkan kembali (penting karena unshift/push elipsis)
         return [...new Set(pageNumbers)].sort((a, b) => {
-            if (a === '...') return -1; // Elipsis harus selalu di awal/akhir bloknya
-            if (b === '...') return 1;
+            if (a === "...") return -1; // Elipsis harus selalu di awal/akhir bloknya
+            if (b === "...") return 1;
             return a - b;
         });
     };
@@ -272,18 +270,23 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             >
                 &laquo; Prev
             </button>
-            <div className="flex items-center space-x-2"> {/* Diubah: gap-2 menjadi space-x-2 */}
-                {getPageNumbers().map((num, index) => (
-                    num === '...' ? (
-                        <span key={index} className="flex items-center justify-center text-gray-500"></span> // Menambahkan kembali '...'
+            <div className="flex items-center space-x-2">
+                {" "}
+                {/* Diubah: gap-2 menjadi space-x-2 */}
+                {getPageNumbers().map((num, index) =>
+                    num === "..." ? (
+                        <span
+                            key={index}
+                            className="flex items-center justify-center text-gray-500"
+                        ></span> // Menambahkan kembali '...'
                     ) : (
                         <button
                             key={num}
                             onClick={() => onPageChange(num)}
                             className={`w-10 h-10 flex items-center justify-center rounded-2xl text-base font-bold transition-all duration-300 transform hover:scale-105 ${
                                 currentPage === num
-                                    ? 'bg-violet-600 text-white shadow-lg' // Menambahkan scale-105 untuk efek hover
-                                    : 'bg-white text-gray-700 hover:text-violet-600' // Diubah: border dihilangkan, bg-white menjadi bg-gray-100
+                                    ? "bg-violet-600 text-white shadow-lg" // Menambahkan scale-105 untuk efek hover
+                                    : "bg-white text-gray-700 hover:text-violet-600" // Diubah: border dihilangkan, bg-white menjadi bg-gray-100
                             }`}
                             aria-current={
                                 currentPage === num ? "page" : undefined
@@ -292,7 +295,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                             {num}
                         </button>
                     )
-                ))}
+                )}
             </div>
             <button
                 onClick={() => onPageChange(currentPage + 1)}
@@ -304,7 +307,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         </nav>
     );
 };
-
 
 // --- Komponen Utama KelolaMahasiswa ---
 export default function KelolaMahasiswa({
@@ -453,19 +455,34 @@ export default function KelolaMahasiswa({
                     <table className="min-w-full">
                         <thead className="bg-purple-100">
                             <tr>
-                                <th style={{ width: '5%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th
+                                    style={{ width: "5%" }}
+                                    className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase"
+                                >
                                     NIM
                                 </th>
-                                <th style={{ width: '25%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th
+                                    style={{ width: "25%" }}
+                                    className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase"
+                                >
                                     Nama
                                 </th>
-                                <th style={{ width: '30%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th
+                                    style={{ width: "30%" }}
+                                    className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase"
+                                >
                                     Prodi
                                 </th>
-                                <th style={{ width: '30%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th
+                                    style={{ width: "30%" }}
+                                    className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase"
+                                >
                                     Jurusan
                                 </th>
-                                <th style={{ width: '5%' }} className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
+                                <th
+                                    style={{ width: "5%" }}
+                                    className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase"
+                                >
                                     Aksi
                                 </th>
                             </tr>
@@ -476,19 +493,34 @@ export default function KelolaMahasiswa({
                                     key={mhs.id}
                                     className="hover:bg-gray-50/50"
                                 >
-                                    <td style={{ width: '15%' }} className="px-6 py-4 text-gray-600">
+                                    <td
+                                        style={{ width: "15%" }}
+                                        className="px-6 py-4 text-gray-600"
+                                    >
                                         {mhs.nim}
                                     </td>
-                                    <td style={{ width: '30%' }} className="px-6 py-4 text-gray-600 font-medium">
+                                    <td
+                                        style={{ width: "30%" }}
+                                        className="px-6 py-4 text-gray-600 font-medium"
+                                    >
                                         {mhs.nama}
                                     </td>
-                                    <td style={{ width: '25%' }} className="px-6 py-4 text-gray-600">
+                                    <td
+                                        style={{ width: "25%" }}
+                                        className="px-6 py-4 text-gray-600"
+                                    >
                                         {mhs.prodi}
                                     </td>
-                                    <td style={{ width: '20%' }} className="px-6 py-4 text-gray-600">
+                                    <td
+                                        style={{ width: "20%" }}
+                                        className="px-6 py-4 text-gray-600"
+                                    >
                                         {mhs.jurusan}
                                     </td>
-                                    <td style={{ width: '10%' }} className="px-6 py-4">
+                                    <td
+                                        style={{ width: "10%" }}
+                                        className="px-6 py-4"
+                                    >
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 onClick={() =>

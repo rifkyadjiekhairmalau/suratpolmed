@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-// Import 'router' dan 'usePage'
+// Import yang kita butuhin, termasuk router
 import { useForm, router, usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
 
@@ -224,10 +224,7 @@ const PengajuDashboard = ({
     tujuan,
     user,
 }) => {
-    // Ambil props, terutama 'flash' message dari server
-    const { props } = usePage();
-
-    // State untuk data dari props
+    // State... (tidak berubah)
     const [allSurat, setAllSurat] = useState(suratMasuk || []);
     const [safeJenisSurat, setSafeJenisSurat] = useState(jenisSurat || []);
     const [safeUrgensi, setSafeUrgensi] = useState(urgensi || []);
@@ -235,16 +232,14 @@ const PengajuDashboard = ({
     const [safeAuth, setSafeAuth] = useState(
         auth || { user: { name: "Pengguna" } }
     );
-
-    // State untuk fungsionalitas UI
     const [selectedSurat, setSelectedSurat] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isEditing, setIsEditing] = useState(false);
     const itemsPerPage = 5;
     const [showForm, setShowForm] = useState(false);
 
-    // Hook useForm
-    const { data, setData, post, put, processing, errors, reset } = useForm({
+    // useForm... (tidak berubah)
+    const { data, setData, post, processing, errors, reset } = useForm({
         id: null,
         jenis_surat_id: "",
         jenis_surat_manual: "",
@@ -257,31 +252,6 @@ const PengajuDashboard = ({
         file_surat: null,
     });
 
-    // "Telinga Ajaib" buat nangkep pesan dari controller
-    useEffect(() => {
-        // Cek kalo ada pesan 'success'
-        if (props.flash && props.flash.success) {
-            // PERTAMA: Tutup dulu form-nya
-            handleCancelForm();
-            // KEDUA: Baru munculin notif cakepnya
-            Swal.fire({
-                title: "Mantap!",
-                text: props.flash.success,
-                icon: "success",
-                timer: 2500,
-                showConfirmButton: false,
-            });
-        }
-        // Cek kalo ada pesan 'error' dari controller (bukan error validasi)
-        if (props.flash && props.flash.error) {
-            Swal.fire({
-                title: "Waduh!",
-                text: props.flash.error,
-                icon: "error",
-            });
-        }
-    }, [props.flash]); // Telinga ini aktif setiap kali 'props.flash' berubah
-
     useEffect(() => {
         setAllSurat(suratMasuk || []);
     }, [suratMasuk]);
@@ -292,12 +262,11 @@ const PengajuDashboard = ({
     };
 
     const handleEditClick = (surat) => {
+        reset();
         setIsEditing(true);
         setData({
             id: surat.id,
-            jenis_surat_id:
-                surat.jenis_surat_id ||
-                (surat.jenis_surat_manual ? "other" : ""),
+            jenis_surat_id: surat.jenis_surat_id || "",
             jenis_surat_manual: surat.jenis_surat_manual || "",
             urgensi_surat_id: surat.urgensi_surat_id,
             tujuan_user_id: surat.tujuan_user_id,
@@ -308,23 +277,50 @@ const PengajuDashboard = ({
             file_surat: null,
         });
         setShowForm(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const handleCancelForm = () => {
         setShowForm(false);
-        setIsEditing(false);
         reset();
     };
 
+    // PERBAIKAN 2: Bikin fungsi Buka Form yang bersih dan anti-amnesia
+    const handleAddNewClick = () => {
+        setIsEditing(false);
+        // Paksa reset manual biar bersih total
+        setData({
+            id: null,
+            jenis_surat_id: "",
+            jenis_surat_manual: "",
+            urgensi_surat_id: "",
+            tujuan_user_id: "",
+            tanggal_pengajuan: new Date().toISOString().slice(0, 10),
+            keterangan: "",
+            nomor_surat: "",
+            perihal: "",
+            file_surat: null,
+        });
+        setShowForm(true);
+    };
+
+    // PERBAIKAN 1: Logika submit yang paling stabil
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        const submissionData = { ...data };
 
-        // Logika `handleFormSubmit` sekarang jadi simpel banget
         const options = {
             preserveScroll: true,
-            // onSuccess dikosongin, karena semua alur sukses dihandle "Telinga Ajaib"
+            onSuccess: () => {
+                handleCancelForm();
+                Swal.fire({
+                    title: "Mantap!",
+                    text: `Surat berhasil ${
+                        isEditing ? "diperbarui" : "diajukan"
+                    }.`,
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            },
             onError: (errs) => {
                 const firstError = Object.values(errs)[0];
                 Swal.fire({
@@ -338,20 +334,21 @@ const PengajuDashboard = ({
         };
 
         if (isEditing) {
-            post(route("pengaju.suratmasuk.update", submissionData.id), {
-                ...options,
-                data: { ...submissionData, _method: "PUT" },
-            });
+            // Ini cara yang bener buat update + file upload
+            router.post(
+                route("pengaju.suratmasuk.update", data.id),
+                {
+                    _method: "put", // Selipin _method: 'put' di sini
+                    ...data, // Kirim semua data dari form
+                },
+                options
+            );
         } else {
-            post(route("pengaju.suratmasuk.store"), submissionData, options);
+            post(route("pengaju.suratmasuk.store"), options);
         }
     };
 
-    const handleAddNewClick = () => {
-        handleCancelForm();
-        setShowForm(true);
-    };
-
+    // Sisa kode ke bawah gak ada perubahan...
     const paginatedSurat = useMemo(() => {
         if (!allSurat) return [];
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -767,8 +764,6 @@ const PengajuDashboard = ({
                                             ? isEditing
                                                 ? "Memperbarui..."
                                                 : "Mengajukan..."
-                                            : isEditing
-                                            ? "Perbarui Pengajuan"
                                             : "Submit Pengajuan"}
                                     </button>
                                 </div>
