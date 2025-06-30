@@ -1,10 +1,10 @@
 import React, { useMemo, useState, useEffect } from "react";
-// PERUBAIKAN 1: Import 'router' untuk logout
-import { useForm, router } from "@inertiajs/react";
+// Import 'router' dan 'usePage'
+import { useForm, router, usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
 
 // =======================================================================
-// Komponen UI (DetailModal, Pagination) - Tidak ada perubahan
+// Komponen UI (DetailModal, Pagination) - Gak ada yang diubah di sini
 // =======================================================================
 const DetailModal = ({ surat, onClose }) => {
     const getStatusBadgeClass = (status) => {
@@ -224,6 +224,9 @@ const PengajuDashboard = ({
     tujuan,
     user,
 }) => {
+    // Ambil props, terutama 'flash' message dari server
+    const { props } = usePage();
+
     // State untuk data dari props
     const [allSurat, setAllSurat] = useState(suratMasuk || []);
     const [safeJenisSurat, setSafeJenisSurat] = useState(jenisSurat || []);
@@ -240,7 +243,7 @@ const PengajuDashboard = ({
     const itemsPerPage = 5;
     const [showForm, setShowForm] = useState(false);
 
-    // Hook useForm untuk menangani form create dan update
+    // Hook useForm
     const { data, setData, post, put, processing, errors, reset } = useForm({
         id: null,
         jenis_surat_id: "",
@@ -254,12 +257,35 @@ const PengajuDashboard = ({
         file_surat: null,
     });
 
-    // Sinkronisasi props ke state jika ada perubahan
+    // "Telinga Ajaib" buat nangkep pesan dari controller
+    useEffect(() => {
+        // Cek kalo ada pesan 'success'
+        if (props.flash && props.flash.success) {
+            // PERTAMA: Tutup dulu form-nya
+            handleCancelForm();
+            // KEDUA: Baru munculin notif cakepnya
+            Swal.fire({
+                title: "Mantap!",
+                text: props.flash.success,
+                icon: "success",
+                timer: 2500,
+                showConfirmButton: false,
+            });
+        }
+        // Cek kalo ada pesan 'error' dari controller (bukan error validasi)
+        if (props.flash && props.flash.error) {
+            Swal.fire({
+                title: "Waduh!",
+                text: props.flash.error,
+                icon: "error",
+            });
+        }
+    }, [props.flash]); // Telinga ini aktif setiap kali 'props.flash' berubah
+
     useEffect(() => {
         setAllSurat(suratMasuk || []);
     }, [suratMasuk]);
 
-    // PERUBAIKAN 2: Fungsi untuk handle logout
     const handleLogout = (e) => {
         e.preventDefault();
         router.post(route("logout"));
@@ -293,36 +319,31 @@ const PengajuDashboard = ({
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
+        const submissionData = { ...data };
+
+        // Logika `handleFormSubmit` sekarang jadi simpel banget
         const options = {
             preserveScroll: true,
-            onSuccess: () => {
-                handleCancelForm();
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: `Surat berhasil ${
-                        isEditing ? "diperbarui" : "diajukan"
-                    }.`,
-                    icon: "success",
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
-            },
+            // onSuccess dikosongin, karena semua alur sukses dihandle "Telinga Ajaib"
             onError: (errs) => {
                 const firstError = Object.values(errs)[0];
                 Swal.fire({
-                    title: "Oops... Terjadi Kesalahan",
+                    title: "Oops... Ada yang Salah",
                     text:
                         firstError ||
-                        "Gagal mengirim data. Silakan periksa kembali semua isian Anda.",
+                        "Gagal mengirim data. Cek lagi isiannya ya.",
                     icon: "error",
                 });
             },
         };
 
         if (isEditing) {
-            put(route("pengaju.suratmasuk.update", data.id), options);
+            post(route("pengaju.suratmasuk.update", submissionData.id), {
+                ...options,
+                data: { ...submissionData, _method: "PUT" },
+            });
         } else {
-            post(route("pengaju.suratmasuk.store"), options);
+            post(route("pengaju.suratmasuk.store"), submissionData, options);
         }
     };
 
@@ -376,7 +397,6 @@ const PengajuDashboard = ({
                             <span className="text-gray-700 mr-4">
                                 Selamat datang, {safeAuth.user.name}!
                             </span>
-                            {/* PERUBAIKAN 3: Tambahkan onClick ke tombol logout */}
                             <form onSubmit={handleLogout}>
                                 <button
                                     type="submit"
@@ -421,7 +441,6 @@ const PengajuDashboard = ({
                                     : "Isi data di bawah ini dengan lengkap untuk mengajukan surat baru."}
                             </p>
                             <form onSubmit={handleFormSubmit} noValidate>
-                                {/* ... FORM FIELDS (Tidak ada perubahan) ... */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                     <div>
                                         <label
@@ -857,7 +876,6 @@ const PengajuDashboard = ({
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4 flex items-center space-x-2">
-                                                            {/* PERUBAIKAN 4: Ubah warna default ikon mata */}
                                                             <button
                                                                 onClick={() =>
                                                                     openDetailModal(
@@ -881,7 +899,6 @@ const PengajuDashboard = ({
                                                                     />
                                                                 </svg>
                                                             </button>
-                                                            {/* PERUBAIKAN 5: Ubah warna default ikon edit */}
                                                             <button
                                                                 onClick={() =>
                                                                     handleEditClick(
