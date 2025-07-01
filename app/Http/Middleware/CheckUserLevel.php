@@ -31,32 +31,22 @@ class CheckUserLevel
         if (! in_array($userLevel, $levels)) {
             // Jika tidak diizinkan, arahkan ke dashboard yang sesuai atau berikan error 403
             switch ($userLevel) {
-    case 'administrator':
-        return redirect()->route('admin.dashboard');
-
-    case 'mahasiswa':
-    case 'pegawai':
-        return redirect()->route('pengaju.suratmasuk.index');
-
-    case 'administrasi umum':
-        return redirect()->route('administrasi_umum.dashboard');
-
-    case 'direktur':
-        return redirect()->route('direktur.dashboard');
-
-    case 'wakil direktur':
-        return redirect()->route('wakil_direktur.dashboard');
-
-    case 'kepala bagian':
-        return redirect()->route('kepala_bagian.dashboard');
-
-    case 'kepala sub bagian':
-        return redirect()->route('kepala_sub_bagian.dashboard');
-
-    default:
-        abort(403, 'Unauthorized access.');
-}
-
+                case 'administrator':
+                    return redirect()->route('admin.dashboard');
+                case 'mahasiswa':
+                case 'pegawai':
+                    return redirect()->route('pengaju.suratmasuk.index');
+                case 'administrasi umum':
+                    return redirect()->route('administrasi_umum.dashboard');
+                case 'direktur':
+                case 'wakil direktur':
+                case 'kepala bagian':
+                    return redirect()->route('disposisi.menunggu');
+                case 'kepala sub bagian':
+                    return redirect()->route('kepala_sub_bagian.dashboard');
+                default:
+                    abort(403, 'Unauthorized access.');
+            }
         }
 
         return $next($request); // Jika level diizinkan, lanjutkan request

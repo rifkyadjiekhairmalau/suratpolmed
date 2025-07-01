@@ -33,22 +33,31 @@ class AdminBagianUmumController extends Controller
         // PERBAIKAN: Menggunakan whereRaw dengan alias eksplisit untuk korelasi
         $suratBelumVerifikasiCount = SuratMasuk::whereHas('tracking', function ($query) use ($statusVerifikasiId) {
             $query->where('status_surat_id', $statusVerifikasiId)
-                  ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
+                ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
         })->count();
 
         // Mengambil daftar surat masuk yang belum diverifikasi (status terakhir 'verifikasi')
         // PERBAIKAN: Menggunakan whereRaw dengan alias eksplisit untuk korelasi
         $suratUntukVerifikasi = SuratMasuk::with([
-            'jenisSurat', 'urgensi', 'tujuan', 'tujuan.jabatanStruktural', 'pengaju',
-            'tracking' => function ($query) { $query->latest(); }, // Memastikan entri tracking terbaru selalu di paling atas
-            'tracking.status', 'tracking.user', 'tracking.dariUser', 'tracking.keUser',
+            'jenisSurat',
+            'urgensi',
+            'tujuan',
+            'tujuan.jabatanStruktural',
+            'pengaju',
+            'tracking' => function ($query) {
+                $query->latest();
+            }, // Memastikan entri tracking terbaru selalu di paling atas
+            'tracking.status',
+            'tracking.user',
+            'tracking.dariUser',
+            'tracking.keUser',
         ])
-        ->whereHas('tracking', function ($query) use ($statusVerifikasiId) {
-            $query->where('status_surat_id', $statusVerifikasiId)
-                  ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
-        })
-        ->orderByDesc('created_at')
-        ->get();
+            ->whereHas('tracking', function ($query) use ($statusVerifikasiId) {
+                $query->where('status_surat_id', $statusVerifikasiId)
+                    ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
+            })
+            ->orderByDesc('created_at')
+            ->get();
 
         return Inertia::render('AdminBagianUmum/Dashboard', [
             'totalSuratMasuk' => $totalSuratMasuk,
@@ -77,21 +86,37 @@ class AdminBagianUmumController extends Controller
             return redirect()->back()->with('error', 'Surat tidak dalam status untuk diverifikasi.');
         }
 
-        // Mendapatkan objek StatusSurat untuk 'disposisi'
-        $statusDisposisi = StatusSurat::where('kode', 'disposisi')->first();
+        // 1. Dapatkan user tujuan dari surat yang diverifikasi
+        $userTujuan = $suratMasuk->tujuan; // Asumsi relasi 'tujuan' sudah ada di model SuratMasuk
 
-        if ($statusDisposisi) {
-            // Membuat entri tracking baru untuk mencatat verifikasi
-            $suratMasuk->tracking()->create([
-                'status_surat_id' => $statusDisposisi->id, // Status berubah menjadi 'disposisi'
-                'catatan' => 'Surat diverifikasi oleh Bagian Umum, menunggu disposisi pejabat.',
-                'user_id' => $adminUser->id, // User yang memverifikasi (Admin Bagian Umum)
-                'dari_user_id' => $adminUser->id, // Dari Admin Bagian Umum
-                'ke_user_id' => $suratMasuk->tujuan_user_id, // Ke Pejabat yang dituju surat
-            ]);
-        } else {
-            return redirect()->back()->with('error', 'Status "disposisi" tidak ditemukan di database.');
+        if (!$userTujuan || !$userTujuan->jabatanStruktural) {
+            return redirect()->back()->with('error', 'Pejabat tujuan surat tidak ditemukan atau tidak memiliki jabatan.');
         }
+
+        // 2. Buat nama status baru secara dinamis berdasarkan jabatan tujuan
+        $namaJabatanTujuan = $userTujuan->jabatanStruktural->jabatan_struktural;
+        $statusNamaBaru = 'Menunggu disposisi ' . $namaJabatanTujuan;
+        $kodeStatusBaru = 'disposisi_' . strtolower(str_replace(' ', '_', $namaJabatanTujuan));
+
+        // 3. Gunakan firstOrCreate untuk membuat status jika belum ada, atau ambil jika sudah ada.
+        // Ini lebih aman daripada membuat status duplikat.
+        $statusDisposisiBaru = StatusSurat::firstOrCreate(
+            ['nama_status' => $statusNamaBaru],
+            [
+                'kode' => $kodeStatusBaru,
+                'urutan' => 3, // Sesuaikan urutan jika perlu
+                'final' => false
+            ]
+        );
+
+        // 4. Buat entri tracking baru dengan status yang sudah dinamis
+        $suratMasuk->tracking()->create([
+            'status_surat_id' => $statusDisposisiBaru->id, // Gunakan ID dari status yang baru dibuat/ditemukan
+            'catatan' => 'Surat diverifikasi oleh Bagian Umum, diteruskan ke ' . $namaJabatanTujuan,
+            'user_id' => $adminUser->id,
+            'dari_user_id' => $adminUser->id,
+            'ke_user_id' => $suratMasuk->tujuan_user_id,
+        ]);
 
         // Redirect kembali ke dashboard (karena daftar verifikasi ada di dashboard sekarang)
         return redirect()->route('administrasi_umum.dashboard')->with('success', 'Surat berhasil diverifikasi dan diteruskan ke pejabat.');
@@ -149,22 +174,31 @@ class AdminBagianUmumController extends Controller
     {
         // PERBAIKAN DI SINI UNTUK whereHas: Mengubah where menjadi whereIn
         $suratMasukTerverifikasi = SuratMasuk::with([
-            'jenisSurat', 'urgensi', 'tujuan', 'tujuan.jabatanStruktural', 'pengaju',
-            'tracking' => function ($query) { $query->latest(); },
-            'tracking.status', 'tracking.user', 'tracking.dariUser', 'tracking.keUser',
+            'jenisSurat',
+            'urgensi',
+            'tujuan',
+            'tujuan.jabatanStruktural',
+            'pengaju',
+            'tracking' => function ($query) {
+                $query->latest();
+            },
+            'tracking.status',
+            'tracking.user',
+            'tracking.dariUser',
+            'tracking.keUser',
         ])
-        ->whereHas('tracking', function ($query) {
-            // >>>>> PERUBAHAN PENTING DI SINI <<<<<
-            $query->whereIn('status_surat_id', function ($subQuery) { // Menggunakan whereIn
-                $subQuery->select('id')
-                         ->from('status_surat')
-                         ->where('kode', '!=', 'verifikasi') // Kecualikan yang belum diverifikasi
-                         ->where('kode', '!=', 'ditolak'); // Kecualikan yang ditolak
+            ->whereHas('tracking', function ($query) {
+                // >>>>> PERUBAHAN PENTING DI SINI <<<<<
+                $query->whereIn('status_surat_id', function ($subQuery) { // Menggunakan whereIn
+                    $subQuery->select('id')
+                        ->from('status_surat')
+                        ->where('kode', '!=', 'verifikasi') // Kecualikan yang belum diverifikasi
+                        ->where('kode', '!=', 'ditolak'); // Kecualikan yang ditolak
+                })
+                    ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
             })
-            ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
-        })
-        ->orderByDesc('created_at')
-        ->get();
+            ->orderByDesc('created_at')
+            ->get();
 
         return Inertia::render('AdminBagianUmum/SuratMasuk/Terverifikasi', [
             'suratMasuk' => $suratMasukTerverifikasi,

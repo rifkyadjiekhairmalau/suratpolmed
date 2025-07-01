@@ -37,29 +37,19 @@ class AuthenticatedSessionController extends Controller
 
         // Redirect berdasarkan level user
         switch ($level) {
-            case 'mahasiswa':
-            case 'pegawai':
-                // Langsung ke halaman pengajuan surat (tanpa dashboard terpisah)
-                return redirect()->route('pengaju.suratmasuk.index');
-
             case 'administrator':
                 return redirect()->route('admin.dashboard');
-
+            case 'mahasiswa':
+            case 'pegawai':
+                return redirect()->route('pengaju.suratmasuk.index');
             case 'administrasi umum':
                 return redirect()->route('administrasi_umum.dashboard');
-
             case 'direktur':
-                return redirect()->route('direktur.dashboard');
-
             case 'wakil direktur':
-                return redirect()->route('wakil_direktur.dashboard');
-
             case 'kepala bagian':
-                return redirect()->route('kepala_bagian.dashboard');
-
+                return redirect()->route('disposisi.menunggu');
             case 'kepala sub bagian':
                 return redirect()->route('kepala_sub_bagian.dashboard');
-
             default:
                 abort(403, 'Akses tidak diizinkan.');
         }

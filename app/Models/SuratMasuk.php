@@ -51,4 +51,14 @@ class SuratMasuk extends Model
         // Ubah ini menjadi latest() atau orderByDesc('created_at')
         return $this->hasMany(TrackingSurat::class)->latest(); // ATAU ->orderByDesc('created_at');
     }
+
+    public function latestTracking()
+    {
+        return $this->hasOne(TrackingSurat::class)->latestOfMany();
+    }
+
+    public function disposisi()
+    {
+        return $this->hasMany(Disposisi::class, 'surat_masuk_id');
+    }
 }
