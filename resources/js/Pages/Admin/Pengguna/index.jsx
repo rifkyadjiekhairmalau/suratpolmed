@@ -3,6 +3,98 @@ import { Head, useForm, router } from "@inertiajs/react"; // Import router for m
 import AdminLayout from "@/layouts/AdminLayout";
 import Swal from "sweetalert2";
 
+// --- Komponen Pagination (DISALIN DARI MAHASISWA/INDEX.JSX) ---
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    if (totalPages <= 1) return null;
+
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 4; // Maksimal 5 tombol angka halaman yang terlihat
+        const halfMax = Math.floor(maxPagesToShow / 3);
+
+        let startPage = Math.max(1, currentPage - halfMax);
+        let endPage = Math.min(totalPages, currentPage + halfMax);
+
+        // Menyesuaikan startPage dan endPage jika terlalu dekat dengan ujung
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            if (startPage === 1) {
+                endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            } else if (endPage === totalPages) {
+                startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+            }
+        }
+
+        // Tambahkan tombol halaman
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        // Tambahkan elipsis dan halaman pertama/terakhir jika diperlukan
+        if (startPage > 1) {
+            if (startPage > 2) pageNumbers.unshift('...'); // Elipsis jika ada lebih dari 1 halaman di antara 1 dan startPage
+            pageNumbers.unshift(1); // Selalu tampilkan halaman pertama
+        }
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) pageNumbers.push('...'); // Elipsis jika ada lebih dari 1 halaman di antara endPage dan totalPages
+            pageNumbers.push(totalPages); // Selalu tampilkan halaman terakhir
+        }
+
+        // Gunakan Set untuk menghilangkan duplikasi (misal: jika totalPages <= maxPagesToShow)
+        // Kemudian urutkan kembali (penting karena unshift/push elipsis)
+        return [...new Set(pageNumbers)].sort((a, b) => {
+            if (a === '...') return -1; // Elipsis harus selalu di awal/akhir bloknya
+            if (b === '...') return 1;
+            return a - b;
+        });
+    };
+
+    return (
+        <nav
+            className="flex items-center justify-center space-x-2 mt-6"
+            aria-label="Pagination"
+        >
+            <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 text-sm font-semibold text-gray-600 hover:text-violet-700 disabled:text-gray-300 disabled:cursor-not-allowed"
+            >
+                &laquo; Prev
+            </button>
+            <div className="flex items-center space-x-2">
+                {getPageNumbers().map((num, index) => (
+                    num === '...' ? (
+                        <span key={index} className="flex items-center justify-center text-gray-500"></span>
+                    ) : (
+                        <button
+                            key={num}
+                            onClick={() => onPageChange(num)}
+                            className={`w-10 h-10 flex items-center justify-center rounded-2xl text-base font-bold transition-all duration-300 transform hover:scale-105 ${
+                                currentPage === num
+                                    ? 'bg-violet-600 text-white shadow-lg'
+                                    : 'bg-white text-gray-700 hover:text-violet-600'
+                            }`}
+                            aria-current={
+                                currentPage === num ? "page" : undefined
+                            }
+                        >
+                            {num}
+                        </button>
+                    )
+                ))}
+            </div>
+            <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 text-sm font-semibold text-gray-600 hover:text-violet-700 disabled:text-gray-300 disabled:cursor-not-allowed"
+            >
+                Next &raquo;
+            </button>
+        </nav>
+    );
+};
+// --- AKHIR KOMPONEN PAGINATION ---
+
+
 export default function Pengguna({
     auth,
     users,
@@ -14,7 +106,7 @@ export default function Pengguna({
     const [searchQuery, setSearchQuery] = useState("");
     const [roleFilter, setRoleFilter] = useState("Semua Role");
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 8;
+    const ITEMS_PER_PAGE = 6;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
@@ -167,19 +259,8 @@ export default function Pengguna({
         });
     };
 
-    const generatePageNumbers = () => {
-        const pages = [];
-        const maxShown = 5;
-        let start = Math.max(currentPage - 2, 1);
-        let end = Math.min(start + maxShown - 1, totalPages);
-        if (end - start < maxShown - 1) {
-            start = Math.max(end - maxShown + 1, 1);
-        }
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
-        return pages;
-    };
+    // Hapus fungsi generatePageNumbers yang lama karena sudah ada di komponen Pagination
+    // const generatePageNumbers = () => { /* ... */ };
 
     return (
         <AdminLayout>
@@ -372,60 +453,18 @@ export default function Pengguna({
                     </table>
                 </div>
 
-                {totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-6">
-                        <nav
-                            className="flex items-center gap-2"
-                            aria-label="Pagination"
-                        >
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                disabled={currentPage === 1}
-                                className="px-3 py-1 text-sm font-semibold text-gray-600 hover:text-violet-700 disabled:text-gray-300 disabled:cursor-not-allowed"
-                            >
-                                « Prev
-                            </button>
-                            {generatePageNumbers().map((page) => (
-                                <button
-                                    type="button"
-                                    key={page}
-                                    onClick={() => handlePageChange(page)}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-2xl text-base font-bold transition-all duration-300 transform hover:scale-105 ${
-                                        currentPage === page
-                                            ? "bg-violet-600 text-white"
-                                            : "bg-gray-100 text-gray-700"
-                                    }`}
-                                    aria-current={
-                                        currentPage === page
-                                            ? "page"
-                                            : undefined
-                                    }
-                                >
-                                    {page}
-                                </button>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    handlePageChange(currentPage + 1)
-                                }
-                                disabled={currentPage === totalPages}
-                                className="px-3 py-1 text-sm font-semibold text-gray-600 hover:text-violet-700 disabled:text-gray-300 disabled:cursor-not-allowed"
-                            >
-                                Next »
-                            </button>
-                        </nav>
-                    </div>
-                )}
+                {/* Menggunakan Komponen Pagination yang baru */}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
 
             {/* Modal for Add/Edit User */}
             {isModalOpen && (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-        <div className="bg-white p-8 rounded-lg shadow-xl max-w-xl w-full mx-4"> {/* DIUBAH: max-w-lg menjadi max-w-xl */}
+        <div className="bg-white p-8 rounded-lg shadow-xl max-w-xl w-full mx-4">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800">
                     {modalMode === "add"
@@ -453,12 +492,12 @@ export default function Pengguna({
                 </button>
             </div>
             <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4"> {/* Menggunakan grid 2 kolom */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
                     {/* Baris 1: Nama Lengkap */}
-                    <div className="md:col-span-2 mb-2"> {/* Nama Lengkap akan mengambil 2 kolom penuh */}
+                    <div className="md:col-span-2 mb-2">
                         <label
                             htmlFor="name"
-                            className="block text-gray-700 text-sm font-bold mb-1" // Mengurangi mb-2 menjadi mb-1 untuk kerapatan
+                            className="block text-gray-700 text-sm font-bold mb-1"
                         >
                             Nama Lengkap:
                         </label>
@@ -479,7 +518,7 @@ export default function Pengguna({
                     </div>
 
                     {/* Baris 2: Username & Password */}
-                    <div className="mb-2"> {/* Kolom 1 dari baris 2 */}
+                    <div className="mb-2">
                         <label
                             htmlFor="username"
                             className="block text-gray-700 text-sm font-bold mb-1"
@@ -503,7 +542,7 @@ export default function Pengguna({
                             </p>
                         )}
                     </div>
-                    <div className="mb-2"> {/* Kolom 2 dari baris 2 */}
+                    <div className="mb-2">
                         <label
                             htmlFor="password"
                             className="block text-gray-700 text-sm font-bold mb-1"
@@ -536,7 +575,7 @@ export default function Pengguna({
                     </div>
 
                     {/* Baris 3: Role & Jabatan Struktural */}
-                    <div className="mb-2"> {/* Kolom 1 dari baris 3 */}
+                    <div className="mb-2">
                         <label
                             htmlFor="level_user_id"
                             className="block text-gray-700 text-sm font-bold mb-1"
@@ -574,7 +613,7 @@ export default function Pengguna({
 
 
                     {/* Baris 4: Status */}
-                    <div className="md:col-span-1 mb-4"> {/* Status mengambil 2 kolom penuh, mb-4 agar tombol tidak terlalu dekat */}
+                    <div className="md:col-span-1 mb-4">
                         <label
                             htmlFor="status"
                             className="block text-gray-700 text-sm font-bold mb-1"
@@ -601,7 +640,7 @@ export default function Pengguna({
                         )}
                     </div>
 
-                    <div className="md:col-span-2 mb-4"> {/* Kolom 2 dari baris 3 */}
+                    <div className="md:col-span-2 mb-4">
                         <label
                             htmlFor="jabatan_struktural_id"
                             className="block text-gray-700 text-sm font-bold mb-1"
@@ -619,7 +658,7 @@ export default function Pengguna({
                                 )
                             }
                             className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-violet-400"
-                        > {/* required dihapus karena opsional */}
+                        >
                             <option value="">
                                 Tidak Ada Jabatan Struktural
                             </option>
@@ -638,9 +677,9 @@ export default function Pengguna({
                             </p>
                         )}
                     </div>
-                </div> {/* Akhir dari grid */}
+                </div>
 
-                <div className="flex items-center justify-end gap-3 mt-4"> {/* mt-4 untuk jarak dari input terakhir */}
+                <div className="flex items-center justify-end gap-3 mt-4">
                     <button
                         type="button"
                         onClick={handleCloseModal}

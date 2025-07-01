@@ -181,38 +181,6 @@ const MahasiswaFormModal = ({ mahasiswa, onClose, prodiOptions, isEdit }) => {
     );
 };
 
-// --- Komponen DeleteConfirmModal ---
-const DeleteConfirmModal = ({ mahasiswa, onClose, onConfirm, processing }) => (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative border-t-4 border-red-500">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-                Konfirmasi Hapus
-            </h2>
-            <p className="text-gray-600">
-                Anda yakin ingin menghapus data mahasiswa{" "}
-                <strong className="font-semibold">{mahasiswa.nama}</strong> (
-                {mahasiswa.nim})?
-            </p>
-            <div className="flex justify-end gap-4 mt-8">
-                <button
-                    onClick={onClose}
-                    className="px-6 py-2 border rounded-lg"
-                    disabled={processing}
-                >
-                    Batal
-                </button>
-                <button
-                    onClick={onConfirm}
-                    className="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold"
-                    disabled={processing}
-                >
-                    {processing ? "Menghapus..." : "Ya, Hapus"}
-                </button>
-            </div>
-        </div>
-    </div>
-);
-
 // --- Komponen Pagination (MODIFIKASI: Tampilan 5 halaman & estetika) ---
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
@@ -392,31 +360,48 @@ export default function KelolaMahasiswa({
         setSelectedMahasiswa(null);
     };
 
-    const handleDelete = () => {
-        if (!selectedMahasiswa) return;
-
-        destroy(route("admin.mahasiswa.destroy", selectedMahasiswa.id), {
-            onSuccess: () => {
-                handleCloseModal(); // Tutup modal setelah berhasil
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil Dihapus!",
-                    text: "Data mahasiswa telah dihapus.",
-                    timer: 3000,
-                    showConfirmButton: false,
+    const handleDeleteClick = (mhs) => { // Fungsi baru untuk memicu SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: `Anda akan menghapus data mahasiswa ${mhs.nama} (${mhs.nim}). Tindakan ini tidak dapat dibatalkan!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                // Return promise for SweetAlert2 to handle loading state
+                return new Promise((resolve, reject) => {
+                    destroy(route("admin.mahasiswa.destroy", mhs.id), {
+                        onSuccess: () => {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil Dihapus!",
+                                text: "Data mahasiswa telah dihapus.",
+                                timer: 3000,
+                                showConfirmButton: false,
+                            });
+                            resolve(); // Resolve promise on success
+                        },
+                        onError: (deleteErrors) => {
+                            console.error("Delete Error:", deleteErrors);
+                            Swal.fire({
+                                icon: "error",
+                                title: "Gagal Menghapus!",
+                                text: "Terjadi kesalahan saat menghapus data.",
+                            });
+                            reject(); // Reject promise on error
+                        },
+                        preserveScroll: true,
+                    });
                 });
             },
-            onError: (deleteErrors) => {
-                console.error("Delete Error:", deleteErrors);
-                Swal.fire({
-                    icon: "error",
-                    title: "Gagal Menghapus!",
-                    text: "Terjadi kesalahan saat menghapus data.",
-                });
-            },
-            preserveScroll: true,
+            allowOutsideClick: () => !Swal.isLoading() // Izinkan klik di luar saat tidak loading
         });
     };
+
 
     return (
         <AdminLayout>
@@ -545,10 +530,7 @@ export default function KelolaMahasiswa({
                                             </button>
                                             <button
                                                 onClick={() =>
-                                                    handleOpenModal(
-                                                        "delete",
-                                                        mhs
-                                                    )
+                                                    handleDeleteClick(mhs) // Memanggil fungsi SweetAlert untuk hapus
                                                 }
                                                 className="p-2 text-red-600 hover:bg-red-100 rounded-full"
                                                 title="Hapus"
@@ -607,15 +589,15 @@ export default function KelolaMahasiswa({
                     isEdit={true}
                 />
             )}
-            {/* Render DeleteConfirmModal */}
-            {modalState === "delete" && selectedMahasiswa && (
+            {/* Hapus bagian ini karena sudah tidak digunakan */}
+            {/* {modalState === "delete" && selectedMahasiswa && (
                 <DeleteConfirmModal
                     onClose={handleCloseModal}
                     onConfirm={handleDelete}
                     mahasiswa={selectedMahasiswa}
                     processing={deleteProcessing} // Teruskan processing dari useForm delete
                 />
-            )}
+            )} */}
         </AdminLayout>
     );
 }

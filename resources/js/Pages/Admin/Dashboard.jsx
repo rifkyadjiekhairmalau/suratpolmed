@@ -52,7 +52,7 @@ export default function Dashboard({ auth }) {
             <div className="rounded-2xl bg-white/80 backdrop-blur-md shadow-xl p-8">
                 <div className="mb-6">
                     <h1 className="text-3xl font-bold text-gray-800">Dashboard Administrator</h1>
-                    <p className="text-gray-600">Ringkasan data total pengguna dalam sistem.</p>
+                    <p className="text-gray-600">Ringkasan data total pengguna, pegawai dan mahasiswa dalam sistem.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-bold">

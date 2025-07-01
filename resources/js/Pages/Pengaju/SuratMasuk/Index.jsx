@@ -386,7 +386,7 @@ const PengajuDashboard = ({
                                     alt="E-Surat Logo"
                                 />
                                 <span className="ml-2 text-xl font-bold text-gray-800">
-                                    e-Surat
+                                     Sistem Surat
                                 </span>
                             </div>
                         </div>
@@ -771,7 +771,7 @@ const PengajuDashboard = ({
                         </div>
                     ) : (
                         <>
-                            <div className="mb-6 flex items-center justify-between">
+                            <div className="mb-3 flex items-center justify-between">
                                 <div>
                                     <h1 className="text-3xl font-bold text-gray-800">
                                         Daftar Pengajuan Surat
@@ -803,21 +803,21 @@ const PengajuDashboard = ({
                             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full">
-                                        <thead className="bg-gray-50">
+                                        <thead className="bg-purple-100">
                                             <tr>
-                                                <th className="px-6 py-3 text-left font-sans text-xs font-bold tracking-wider text-gray-500 uppercase">
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                                     NOMOR AGENDA
                                                 </th>
-                                                <th className="px-6 py-3 text-left font-sans text-xs font-bold tracking-wider text-gray-500 uppercase">
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                                     JENIS SURAT
                                                 </th>
-                                                <th className="px-6 py-3 text-left font-sans text-xs font-bold tracking-wider text-gray-500 uppercase">
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                                     TANGGAL PENGAJUAN
                                                 </th>
-                                                <th className="px-6 py-3 text-left font-sans text-xs font-bold tracking-wider text-gray-500 uppercase">
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                                     STATUS
                                                 </th>
-                                                <th className="px-6 py-3 text-left font-sans text-xs font-bold tracking-wider text-gray-500 uppercase">
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-black-600 uppercase">
                                                     AKSI
                                                 </th>
                                             </tr>
@@ -905,7 +905,7 @@ const PengajuDashboard = ({
                                                                 }
                                                                 className={`transition-colors ${
                                                                     isEditable
-                                                                        ? "text-green-500 hover:text-green-700"
+                                                                        ? "text-amber-500 hover:text-amber-700"
                                                                         : "text-gray-300 cursor-not-allowed"
                                                                 }`}
                                                                 title={

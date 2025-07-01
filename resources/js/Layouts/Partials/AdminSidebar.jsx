@@ -63,19 +63,6 @@ export default function AdminSidebar() {
                         Manajemen Pengguna
                     </Link>
 
-                    {/* Link ke Manajemen Mahasiswa - Menggunakan FaUserGraduate */}
-                    <Link
-                        href={route("admin.mahasiswa.index")}
-                        className={
-                            route().current("admin.mahasiswa.index")
-                                ? activeClass
-                                : inactiveClass
-                        }
-                    >
-                        <FaUserGraduate className={iconClass} />
-                        Manajemen Mahasiswa
-                    </Link>
-
                     {/* Link ke Manajemen Pegawai - Menggunakan FaBriefcase */}
                     <Link
                         href={route("admin.pegawai.index")}
@@ -87,6 +74,19 @@ export default function AdminSidebar() {
                     >
                         <FaBriefcase className={iconClass} />
                         Manajemen Pegawai
+                    </Link>
+
+                    {/* Link ke Manajemen Mahasiswa - Menggunakan FaUserGraduate */}
+                    <Link
+                        href={route("admin.mahasiswa.index")}
+                        className={
+                            route().current("admin.mahasiswa.index")
+                                ? activeClass
+                                : inactiveClass
+                        }
+                    >
+                        <FaUserGraduate className={iconClass} />
+                        Manajemen Mahasiswa
                     </Link>
                 </nav>
             </div>

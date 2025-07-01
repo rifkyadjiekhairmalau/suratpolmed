@@ -307,7 +307,7 @@ export default function KelolaPegawai({
 
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 8; // Menampilkan 10 data per halaman
+    const ITEMS_PER_PAGE = 7; // Menampilkan 10 data per halaman
 
     const filteredAndPaginatedPegawai = useMemo(() => {
         const filtered = pegawai.filter((p) =>
