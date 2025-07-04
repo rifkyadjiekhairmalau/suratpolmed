@@ -433,11 +433,11 @@ export default function KelolaPegawai({
                         <thead>
                             <tr className="bg-purple-100 text-left text-xs font-bold text-black-600">
                                 <th className="px-6 py-3">NIP</th>
-                                <th className="px-6 py-3">Gelar Depan</th>
-                                <th className="px-6 py-3">Nama</th>
-                                <th className="px-6 py-3">Gelar Belakang</th>
-                                <th className="px-6 py-3">Jabatan Struktural</th>
-                                <th className="px-6 py-3">Aksi</th>
+                                <th className="px-6 py-3">GELAR DEPAN</th>
+                                <th className="px-6 py-3">NAMA</th>
+                                <th className="px-6 py-3">GELAR BELAKANG</th>
+                                <th className="px-6 py-3">JABATAN STRUKTURAL</th>
+                                <th className="px-6 py-3">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>

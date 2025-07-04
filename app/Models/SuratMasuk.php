@@ -54,7 +54,7 @@ class SuratMasuk extends Model
 
     public function latestTracking()
     {
-        return $this->hasOne(TrackingSurat::class)->latestOfMany();
+        return $this->hasOne(TrackingSurat::class)->latestOfMany()->with(['status', 'user', 'dariUser', 'keUser']);
     }
 
     public function disposisi()

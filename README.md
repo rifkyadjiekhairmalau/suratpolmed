@@ -59,3 +59,90 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+
+
+<div>
+                                        <label
+                                            htmlFor="jenis_surat_id"
+                                            className="block text-sm font-medium text-gray-700 mb-1"
+                                        >
+                                            Jenis Surat
+                                        </label>
+                                        <select
+                                            id="jenis_surat_id"
+                                            name="jenis_surat_id"
+                                            value={data.jenis_surat_id}
+                                            onChange={(e) => {
+                                                const selectedId =
+                                                    e.target.value;
+                                                if (selectedId !== "other") {
+                                                    setData({
+                                                        jenis_surat_id:
+                                                            selectedId,
+                                                        jenis_surat_manual: "",
+                                                    });
+                                                } else {
+                                                    setData(
+                                                        "jenis_surat_id",
+                                                        selectedId
+                                                    );
+                                                }
+                                            }}
+                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                            required
+                                        >
+                                            <option value="">
+                                                Pilih Jenis Surat...
+                                            </option>
+                                            {safeJenisSurat.map((jenis) => (
+                                                <option
+                                                    key={jenis.id}
+                                                    value={jenis.id}
+                                                >
+                                                    {jenis.nama_jenis}
+                                                </option>
+                                            ))}
+                                            <option value="other">
+                                                Lainnya...
+                                            </option>
+                                        </select>
+                                        {errors.jenis_surat_id && (
+                                            <div className="text-red-600 text-xs mt-1">
+                                                {errors.jenis_surat_id}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {data.jenis_surat_id === "other" && (
+                                        <div className="animate-fade-in">
+                                            <label
+                                                htmlFor="jenis_surat_manual"
+                                                className="block text-sm font-medium text-gray-700 mb-1"
+                                            >
+                                                Jenis Surat Lainnya
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="jenis_surat_manual"
+                                                name="jenis_surat_manual"
+                                                value={data.jenis_surat_manual}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "jenis_surat_manual",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Contoh: Surat Rekomendasi Beasiswa"
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                                required
+                                            />
+                                            {errors.jenis_surat_manual && (
+                                                <div className="text-red-600 text-xs mt-1">
+                                                    {errors.jenis_surat_manual}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div>

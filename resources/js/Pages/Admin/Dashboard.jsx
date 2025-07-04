@@ -37,12 +37,8 @@ const UsersIcon = () => (
     </svg>
 );
 
-export default function Dashboard({ auth }) {
-    const stats = {
-        pengguna: 1,
-        pegawai: 1,
-        mahasiswa: 1,
-    };
+export default function Dashboard({ auth, stats = {} }) {
+    const { user = 0, pegawai = 0, mahasiswa = 0 } = stats;
 
     return (
         <AdminLayout>
@@ -56,9 +52,9 @@ export default function Dashboard({ auth }) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-bold">
-                    <StatCard title="Total Pengguna" value={stats.pengguna.toString()} icon={<UsersIcon/>} />
-                    <StatCard title="Total Pegawai" value={stats.pegawai.toString()} icon={<DosenIcon />} />
-                    <StatCard title="Total Mahasiswa" value={stats.mahasiswa.toString()} icon={<MahasiswaIcon />} />
+                    <StatCard title="Total Pengguna" value={(user ?? 0).toString()} icon={<UsersIcon />} />
+                    <StatCard title="Total Pegawai" value={(pegawai ?? 0).toString()} icon={<DosenIcon />} />
+                    <StatCard title="Total Mahasiswa" value={(mahasiswa ?? 0).toString()} icon={<MahasiswaIcon />} />
                 </div>
             </div>
         </AdminLayout>

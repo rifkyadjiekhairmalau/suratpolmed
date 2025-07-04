@@ -49,7 +49,7 @@ class AuthenticatedSessionController extends Controller
             case 'kepala bagian':
                 return redirect()->route('disposisi.menunggu');
             case 'kepala sub bagian':
-                return redirect()->route('kepala_sub_bagian.dashboard');
+                return redirect()->route('kasubag.menunggu');
             default:
                 abort(403, 'Akses tidak diizinkan.');
         }

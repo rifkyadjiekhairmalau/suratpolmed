@@ -70,7 +70,7 @@ class UserSeeder extends Seeder
                 'level_user_id' => 6, // Wakil Direktur
                 'mahasiswa_id' => null,
                 'pegawai_id' => null,
-                'jabatan_struktural_id' => 93, 
+                'jabatan_struktural_id' => 93,
                 'status' => 'aktif',
                 'remember_token' => null,
                 'created_at' => now(),
@@ -83,7 +83,7 @@ class UserSeeder extends Seeder
                 'level_user_id' => 6,
                 'mahasiswa_id' => null,
                 'pegawai_id' => null,
-                'jabatan_struktural_id' => 94, 
+                'jabatan_struktural_id' => 94,
                 'status' => 'aktif',
                 'remember_token' => null,
                 'created_at' => now(),
@@ -96,7 +96,7 @@ class UserSeeder extends Seeder
                 'level_user_id' => 7, // Kepala Bagian
                 'mahasiswa_id' => null,
                 'pegawai_id' => null,
-                'jabatan_struktural_id' => 95, 
+                'jabatan_struktural_id' => 95,
                 'status' => 'aktif',
                 'remember_token' => null,
                 'created_at' => now(),
@@ -109,7 +109,7 @@ class UserSeeder extends Seeder
                 'level_user_id' => 7, // Kepala Bagian
                 'mahasiswa_id' => null,
                 'pegawai_id' => null,
-                'jabatan_struktural_id' => 96, 
+                'jabatan_struktural_id' => 96,
                 'status' => 'aktif',
                 'remember_token' => null,
                 'created_at' => now(),
@@ -122,7 +122,7 @@ class UserSeeder extends Seeder
                 'level_user_id' => 8, // Kepala Sub Bagian
                 'mahasiswa_id' => null,
                 'pegawai_id' => null,
-                'jabatan_struktural_id' => 97, 
+                'jabatan_struktural_id' => 97,
                 'status' => 'aktif',
                 'remember_token' => null,
                 'created_at' => now(),
