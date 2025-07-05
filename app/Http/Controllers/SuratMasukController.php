@@ -95,7 +95,7 @@ class SuratMasukController extends Controller
             'keterangan' => 'nullable|string|max:500',
             'nomor_surat' => 'nullable|string|max:100',
             'perihal' => 'required|string|max:255',
-            'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+            'file_surat' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
         $tahun = now()->year;
@@ -152,7 +152,7 @@ class SuratMasukController extends Controller
             'keterangan' => 'nullable|string|max:500',
             'nomor_surat' => 'nullable|string|max:100',
             'perihal' => 'required|string|max:255',
-            'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+            'file_surat' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
         $validatedData['file_path'] = $surat->file_path; // Bawa path file lama

@@ -148,14 +148,14 @@ export default function Riwayat({ auth, suratSudahTindakLanjut }) {
             <div className="py-0.5">
                 <div className="max-w-7xl mx-auto sm:px-2 lg:px-25 w-full">
                     <div className="bg-white shadow-sm sm:rounded-lg overflow-hidden p-6">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-4">
                             Surat yang Telah Saya Tindak Lanjut
                         </h1>
                         <div className="mb-4 flex justify-between items-center">
                             <input
                                 type="text"
                                 placeholder="Cari Perihal / No. Agenda / Tanggal Selesai"
-                                className="w-full max-w-xl px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full max-w-xl px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -167,7 +167,7 @@ export default function Riwayat({ auth, suratSudahTindakLanjut }) {
                                     <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider w-[33%]">Perihal</th>
                                     <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider w-[20%]">Pengaju</th>
                                     <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider w-[15%]">Tanggal Selesai</th>
-                                    <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider w-[10%]">Status</th>
+                                    <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider w-[10%]">Status Terkini</th>
                                     <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-black uppercase tracking-wider w-[5%]">Aksi</th>
                                 </tr>
                             </thead>

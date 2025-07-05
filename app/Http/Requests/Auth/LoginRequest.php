@@ -41,7 +41,14 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('username', 'password'), $this->boolean('remember'))) {
+        // 1. Ambil kredensial dasar (username & password) dari form
+        $credentials = $this->only('username', 'password');
+
+        // 2. Tambahkan syarat WAJIB: status pengguna harus 'aktif'
+        $credentials['status'] = 'aktif';
+
+        // 3. Gunakan kredensial yang sudah dimodifikasi untuk mencoba login
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

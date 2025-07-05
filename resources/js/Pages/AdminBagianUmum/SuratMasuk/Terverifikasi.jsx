@@ -316,7 +316,7 @@ export default function Terverifikasi({ auth, daftarSurat }) {
                                 </svg>
                                 <input
                                     type="text"
-                                    placeholder="Cari perihal, no. agenda..."
+                                    placeholder="Cari Perihal atau No. Agenda"
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);

@@ -102,7 +102,7 @@ const VerifikasiModal = ({ surat, onClose, onVerifikasi, onKembalikan }) => {
                     <section>
                         <h3 className="text-lg font-semibold text-gray-700 mb-3">Formulir Verifikasi</h3>
                          <div>
-                            <label htmlFor="tu_verification_notes" className="block text-gray-700 text-sm font-medium mb-2">Catatan Verifikasi / Alasan Penolakan</label>
+                            <label htmlFor="tu_verification_notes" className="block text-gray-700 text-sm font-medium mb-2">Alasan Penolakan</label>
                             <textarea id="tu_verification_notes" rows={3} value={catatan} onChange={(e) => setCatatan(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm" placeholder="Wajib diisi jika surat dikembalikan/ditolak. Opsional jika diverifikasi..."></textarea>
                         </div>
                     </section>
@@ -315,11 +315,8 @@ export default function Dashboard({ auth, totalSuratMasuk, totalSuratKeluar, sur
                             <div className="flex flex-col md:flex-row gap-4 w-full">
                                 <div className="relative flex-grow">
                                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                    <input type="text" placeholder="Cari perihal atau no. agenda..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm w-full" />
+                                    <input type="text" placeholder="Cari perihal atau no. agenda..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} className=" w-1/2 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm w-full" />
                                 </div>
-                                <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} className="pl-4 pr-18 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm md:w-auto text-left">
-                                    {allUniqueStatuses.map(status => (<option key={status} value={status}>{status}</option>))}
-                                </select>
                             </div>
                         </div>
                         <div className="overflow-x-auto">

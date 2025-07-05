@@ -368,7 +368,7 @@ export default function SuratKeluar({ auth, suratKeluar: initialSuratKeluar }) {
                     </div>
 
                     <div className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-purple-200">
-                        <div className="mb-4 flex flex-col md:flex-row items-center gap-4">
+                        <div className="w-1/2 mb-4 flex flex-col md:flex-row items-center gap-4">
                             <input
                                 type="text"
                                 placeholder="Cari No. Surat atau Perihal"
@@ -379,16 +379,6 @@ export default function SuratKeluar({ auth, suratKeluar: initialSuratKeluar }) {
                                 }}
                                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-400"
                             />
-                            <select
-                                value={statusFilter}
-                                onChange={e => {
-                                    setStatusFilter(e.target.value);
-                                    setCurrentPage(1);
-                                }}
-                                className="min-w-[220px] px-6 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-400"
-                            >
-                                {STATUS_OPTIONS.map(opt => (<option key={opt} value={opt}>{opt}</option>))}
-                            </select>
                         </div>
 
                         <div className="overflow-x-auto">

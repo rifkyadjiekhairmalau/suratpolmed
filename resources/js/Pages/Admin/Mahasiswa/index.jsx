@@ -406,7 +406,7 @@ export default function KelolaMahasiswa({
     return (
         <AdminLayout>
             <Head title="Manajemen Mahasiswa" />
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-3">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800">
                         Manajemen Mahasiswa

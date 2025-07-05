@@ -112,7 +112,7 @@ class AdminBagianUmumController extends Controller
         // 4. Buat entri tracking baru dengan status yang sudah dinamis
         $suratMasuk->tracking()->create([
             'status_surat_id' => $statusDisposisiBaru->id, // Gunakan ID dari status yang baru dibuat/ditemukan
-            'catatan' => 'Surat diverifikasi oleh Bagian Umum, diteruskan ke ' . $namaJabatanTujuan,
+            'catatan' => 'Surat diverifikasi oleh Bagian Umum, silahkan antar hardcopy surat ke Bagian Umum Gedung Z Lantai 1, diteruskan ke ' . $namaJabatanTujuan,
             'user_id' => $adminUser->id,
             'dari_user_id' => $adminUser->id,
             'ke_user_id' => $suratMasuk->tujuan_user_id,

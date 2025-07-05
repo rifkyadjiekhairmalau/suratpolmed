@@ -174,13 +174,13 @@ export default function Riwayat({ auth, suratSudahDisposisi }) {
                             <input
                                 type="text"
                                 placeholder="Cari Perihal / No. Agenda / Tanggal Disposisi"
-                                className="w-full max-w-xl px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full max-w-xl px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             {/* [PERUBAHAN]: Select dilebarkan dengan 'w-48' */}
                             <select
-                                className="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-48 px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 value={statusFilter}
                                 onChange={(e) =>
                                     setStatusFilter(e.target.value)
