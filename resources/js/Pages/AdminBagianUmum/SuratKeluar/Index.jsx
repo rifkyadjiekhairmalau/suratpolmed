@@ -738,21 +738,21 @@ export default function SuratKeluar({ auth, suratKeluar: initialSuratKeluar }) {
                                     {paginatedData.length > 0 ? (
                                         paginatedData.map((surat) => (
                                             <tr key={surat.id}>
-                                                <td className="px-4 py-3">
+                                                <td className="px-6 py-4">
                                                     {surat.nomor_agenda}
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-6 py-4">
                                                     {surat.nomor_surat}
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-6 py-4">
                                                     {dayjs(
                                                         surat.tanggal_keluar
                                                     ).format("DD MMMM YYYY")}
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-6 py-4">
                                                     {surat.tujuan}
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-6 py-4">
                                                     {surat.file_url ? (
                                                         <a
                                                             href={

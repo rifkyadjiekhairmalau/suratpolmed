@@ -287,8 +287,7 @@ export default function Riwayat({ auth, suratSudahDisposisi }) {
                                             colSpan="6"
                                             className="px-6 py-12 text-center text-gray-500"
                                         >
-                                            Tidak ada data yang cocok dengan
-                                            filter Anda.
+                                            Tidak ada data riwayat disposisi.
                                         </td>
                                     </tr>
                                 )}

@@ -227,7 +227,7 @@ export default function Riwayat({ auth, suratSudahTindakLanjut }) {
                                             colSpan="6"
                                             className="px-6 py-12 text-center text-gray-500"
                                         >
-                                            Tidak ada surat yang cocok dengan pencarian Anda.
+                                            Tidak ada data riwayat disposisi.
                                         </td>
                                     </tr>
                                 )}

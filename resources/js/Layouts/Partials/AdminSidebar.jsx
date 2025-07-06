@@ -21,7 +21,7 @@ export default function AdminSidebar() {
     const iconClass = "w-5 h-5 mr-3"; // Sesuaikan jika perlu, FaIcons mungkin punya ukuran intrinsik
 
     return (
-        <aside className="sidebar min-h-screen bg-gradient-to-b from-violet-700 via-violet-500 to-violet-900 p-6 flex flex-col justify-between rounded-[0px] w-[260px]">
+        <aside className="sidebar min-h-screen bg-gradient-to-b from-violet-700 via-violet-500 to-violet-900 p-6 flex flex-col justify-between rounded-[0px] w-[260px] flex-shrink-0">
             <div>
                 <div className="text-center mb-10">
 
