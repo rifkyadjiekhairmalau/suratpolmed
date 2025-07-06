@@ -181,39 +181,39 @@ class AdminBagianUmumController extends Controller
             'tracking.status',
             'tracking.user',
         ])
-        ->whereHas('tracking', function ($query) {
-            $query->whereIn('status_surat_id', function ($subQuery) {
-                $subQuery->select('id')
-                         ->from('status_surat')
-                         ->where('kode', '!=', 'verifikasi') // Kecualikan yang belum diverifikasi
-                         ->where('kode', '!=', 'ditolak');    // Kecualikan yang sudah ditolak
+            ->whereHas('tracking', function ($query) {
+                $query->whereIn('status_surat_id', function ($subQuery) {
+                    $subQuery->select('id')
+                        ->from('status_surat')
+                        ->where('kode', '!=', 'verifikasi') // Kecualikan yang belum diverifikasi
+                        ->where('kode', '!=', 'ditolak');    // Kecualikan yang sudah ditolak
+                })
+                    ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
             })
-            ->whereRaw('tracking_surat.id = (SELECT MAX(t2.id) FROM tracking_surat AS t2 WHERE t2.surat_masuk_id = tracking_surat.surat_masuk_id)');
-        })
-        ->orderByDesc('created_at')
-        ->get()
-        ->map(function ($surat) {
-            $latestStatus = $surat->tracking->first();
-            return [
-                'id' => $surat->id,
-                'no_agenda' => $surat->nomor_agenda,
-                'tgl_pengajuan' => $surat->created_at->translatedFormat('d F Y'),
-                'perihal' => $surat->perihal,
-                'jenis_surat' => $surat->jenisSurat->nama_jenis ?? 'N/A',
-                'pengaju' => $surat->pengaju->name ?? 'N/A',
-                'status_terkini' => $latestStatus->status->nama_status ?? 'N/A',
-                'ditujukan_kepada' => $surat->tujuan->jabatanStruktural->jabatan_struktural ?? 'N/A',
-                'urgensi' => $surat->urgensi->nama_urgensi ?? '',
-                'isi_surat' => $surat->keterangan,
-                'file_surat' => $surat->file_path ? Storage::url($surat->file_path) : '#',
-                'tracking_history' => $surat->tracking->map(fn($t) => [
-                    'tanggal' => $t->created_at->translatedFormat('d F Y, H:i:s'),
-                    'aksi_oleh' => $t->user->name ?? 'Sistem',
-                    'status' => $t->status->nama_status ?? 'N/A',
-                    'catatan' => $t->catatan,
-                ]),
-            ];
-        });
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($surat) {
+                $latestStatus = $surat->tracking->first();
+                return [
+                    'id' => $surat->id,
+                    'no_agenda' => $surat->nomor_agenda,
+                    'tgl_pengajuan' => $surat->created_at->translatedFormat('d F Y'),
+                    'perihal' => $surat->perihal,
+                    'jenis_surat' => $surat->jenisSurat->nama_jenis ?? 'N/A',
+                    'pengaju' => $surat->pengaju->name ?? 'N/A',
+                    'status_terkini' => $latestStatus->status->nama_status ?? 'N/A',
+                    'ditujukan_kepada' => $surat->tujuan->jabatanStruktural->jabatan_struktural ?? 'N/A',
+                    'urgensi' => $surat->urgensi->nama_urgensi ?? '',
+                    'isi_surat' => $surat->keterangan,
+                    'file_surat' => $surat->file_path ? Storage::url($surat->file_path) : '#',
+                    'tracking_history' => $surat->tracking->map(fn($t) => [
+                        'tanggal' => $t->created_at,
+                        'aksi_oleh' => $t->user->name ?? 'Sistem',
+                        'status' => $t->status->nama_status ?? 'N/A',
+                        'catatan' => $t->catatan,
+                    ]),
+                ];
+            });
 
         return Inertia::render('AdminBagianUmum/SuratMasuk/Terverifikasi', [
             // Nama prop diubah menjadi 'daftarSurat' agar lebih deskriptif
