@@ -146,7 +146,7 @@ export default function Riwayat({ auth, suratSudahTindakLanjut }) {
         <KasubagLayout user={auth.user}>
             <Head title="Riwayat Tindak Lanjut" />
             <div className="py-0.5">
-                <div className="max-w-7xl mx-auto sm:px-2 lg:px-25 w-full">
+                <div className="max-w-8xl mx-auto sm:px-2 lg:px-25 w-full">
                     <div className="bg-white shadow-sm sm:rounded-lg overflow-hidden p-6">
                         <h1 className="text-2xl font-bold text-gray-800 mb-4">
                             Surat yang Telah Saya Tindak Lanjut

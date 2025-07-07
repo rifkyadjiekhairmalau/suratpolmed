@@ -55,6 +55,11 @@ const TrackingItem = ({ item, isLast }) => {
         return <MailOutlined className="text-gray-500" />;
     };
 
+    const shouldShowLevel =
+        item.level_aksi_oleh &&
+        (item.level_aksi_oleh.toLowerCase() === "mahasiswa" ||
+         item.level_aksi_oleh.toLowerCase() === "pegawai");
+
     return (
         <div className="relative flex pb-8">
             {!isLast && (
@@ -72,8 +77,15 @@ const TrackingItem = ({ item, isLast }) => {
                 <p className="text-sm text-gray-500">
                     {dayjs(item.tanggal).format("DD MMM YYYY, HH:mm")}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                    Oleh: {item.aksi_oleh}
+                <p className="mt-1 text-xs text-gray-500 flex items-center">
+                    <span>Oleh: {item.aksi_oleh}</span>
+
+                    {/* Tampilkan level jika kondisi 'shouldShowLevel' terpenuhi */}
+                    {shouldShowLevel && (
+                        <span className="ml-1.5 px-1.5 py-0.5 bg-violet-200 text-violet-700 text-[10px] font-semibold rounded-md">
+                            ({item.level_aksi_oleh})
+                        </span>
+                    )}
                 </p>
                 {item.catatan && (
                     <p className="mt-2 text-xs italic bg-yellow-100 border border-yellow-200 text-yellow-800 p-2 rounded-md">
@@ -288,7 +300,7 @@ export default function Terverifikasi({ auth, daftarSurat }) {
     return (
         <BagianUmumLayout user={auth.user}>
             <Head title="Surat Masuk Terverifikasi" />
-            <main className="min-h-screen bg-gray-50 p-2 md:p-4">
+            <main className="min-h-[450] bg-gray-50 p-2 md:p-4">
                 <div className="max-w-7xl mx-auto">
                     <h1 className="text-3xl font-extrabold text-gray-800 mb-2">
                         Surat Masuk Terverifikasi

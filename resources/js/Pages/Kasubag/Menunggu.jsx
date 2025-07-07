@@ -74,7 +74,7 @@ export default function Menunggu({ auth, suratMenunggu }) {
 
     // [PERUBAHAN]: Pengaturan jumlah baris per halaman (PAGE_LIST)
     // Anda bisa mengubah angka ini sesuai kebutuhan.
-    const ITEMS_PER_PAGE = 8;
+    const ITEMS_PER_PAGE = 5;
 
     // Logika paginasi
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -104,7 +104,7 @@ export default function Menunggu({ auth, suratMenunggu }) {
         <KasubagLayout user={auth.user}>
             <Head title="Menunggu Tindak Lanjut" />
             <div className="py-0.5">
-                <div className="max-w-7xl mx-auto sm:px-2 lg:px-25 w-full">
+                <div className="max-w-8xl mx-auto sm:px-2 lg:px-25 w-full">
                     <div className="bg-white shadow-sm sm:rounded-lg overflow-hidden p-6">
                         <h1 className="text-2xl font-bold text-gray-800 mb-6">
                             Surat Menunggu Tindak Lanjut

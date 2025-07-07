@@ -96,7 +96,7 @@ export default function Riwayat({ auth, suratSudahDisposisi }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 3;
+    const ITEMS_PER_PAGE = 6;
 
     const filteredData = useMemo(() => {
         return suratSudahDisposisi
@@ -165,7 +165,7 @@ export default function Riwayat({ auth, suratSudahDisposisi }) {
         <DisposisiLayout user={auth.user}>
             <Head title="Riwayat Disposisi" />
             <div className="py-0.5">
-                <div className="max-w-7xl mx-auto sm:px-2 lg:px-25 w-full">
+                <div className="max-w-8xl mx-auto sm:px-2 lg:px-25 w-full">
                     <div className="bg-white shadow-sm sm:rounded-lg overflow-hidden p-6">
                         <h2 className="text-2xl font-bold mb-2">
                             Surat Yang Telah Saya Disposisi

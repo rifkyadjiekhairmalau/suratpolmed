@@ -19,7 +19,9 @@ class SuratMasukController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        // $user = Auth::user()->load('levelUser');
+        // Kode yang Diperbaiki
+        $user = User::with('levelUser')->find(Auth::id());
 
         $suratMasuk = SuratMasuk::with([
             'jenisSurat',
@@ -29,9 +31,9 @@ class SuratMasukController extends Controller
             'pengaju',
             'tracking' => fn($q) => $q->latest(),
             'tracking.status',
-            'tracking.user',
-            'tracking.dariUser',
-            'tracking.keUser'
+            'tracking.user.levelUser',
+            'tracking.dariUser.levelUser',
+            'tracking.keUser.levelUser'
         ])
             ->where('pengaju_user_id', $user->id)
             ->orderByDesc('created_at')

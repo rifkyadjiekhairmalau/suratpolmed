@@ -67,10 +67,21 @@ const TrackingItem = ({ item, isLast }) => {
                     {dayjs(item.created_at).format("DD MMM YYYY, HH:mm")}
                 </p>
                 <p className="mt-1 text-xs text-gray-500">
-                    {item.dariUser && item.keUser
-                        ? `Dari ${item.dariUser.name} ke ${item.keUser.name}`
-                        : `Oleh: ${item.user?.name || "-"}`}
-                </p>
+                        {item.dariUser && item.keUser
+                            ? `Dari ${item.dariUser.name} ke ${item.keUser.name}`
+                            : `Oleh: ${item.user?.name || "Sistem"}`}
+
+                        {/* Blok kondisional untuk menampilkan level user tertentu */}
+                        {item.user?.level_user?.nama_level &&
+                            (item.user.level_user.nama_level.toLowerCase() ===
+                                "mahasiswa" ||
+                                item.user.level_user.nama_level.toLowerCase() ===
+                                    "pegawai") && (
+                                <span className="ml-1.5 px-1.5 py-0.5 bg-violet-200 text-violet-700 text-[10px] font-semibold rounded-md">
+                                    {item.user.level_user.nama_level}
+                                </span>
+                            )}
+                    </p>
                 {item.catatan && (
                     <p className="mt-2 text-xs italic bg-yellow-100 border border-yellow-200 text-yellow-800 p-2 rounded-md">
                         "{item.catatan}"

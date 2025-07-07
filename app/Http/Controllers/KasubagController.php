@@ -21,11 +21,11 @@ class KasubagController extends Controller
         $namaStatus = 'Menunggu Tindak Lanjut oleh ' . $jabatan;
 
         $relationsToLoad = [
-            'pengaju',
+            'pengaju.levelUser',
             'jenisSurat',
             'urgensi',
             'latestTracking', // Cukup panggil ini, karena sub-relasinya sudah otomatis dimuat oleh model
-            'tracking' => fn($q) => $q->with(['status', 'user', 'dariUser', 'keUser'])->latest(),
+            'tracking' => fn($q) => $q->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest(),
         ];
 
         $suratMenunggu = SuratMasuk::with($relationsToLoad)
@@ -46,11 +46,11 @@ class KasubagController extends Controller
 
         // Terapkan perbaikan yang sama di sini
         $relationsToLoad = [
-            'pengaju',
+            'pengaju.levelUser',
             'jenisSurat',
             'urgensi',
             'latestTracking', // Cukup panggil ini
-            'tracking' => fn($q) => $q->with(['status', 'user', 'dariUser', 'keUser'])->latest(),
+            'tracking' => fn($q) => $q->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest(),
         ];
 
         $suratSudahTindakLanjut = SuratMasuk::whereHas('tracking', function ($query) use ($user) {

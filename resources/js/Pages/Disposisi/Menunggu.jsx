@@ -112,7 +112,7 @@ export default function Menunggu({
     const [currentPage, setCurrentPage] = useState(1);
 
     // Pengaturan jumlah baris per halaman
-    const ITEMS_PER_PAGE = 5;
+    const ITEMS_PER_PAGE = 6;
 
     // useEffect(() => {
     //     if (flash.success) {
@@ -143,7 +143,7 @@ export default function Menunggu({
         <DisposisiLayout user={auth.user}>
             <Head title="Surat Menunggu Disposisi" />
             <div className="py-0.5">
-                <div className="max-w-7xl mx-auto sm:px-2 lg:px-25 w-full">
+                <div className="max-w-8xl mx-auto sm:px-2 lg:px-25 w-full">
                     <div className="bg-white shadow-sm sm:rounded-lg overflow-hidden p-6">
                         <h1 className="text-2xl font-bold text-gray-800 mb-6">
                             Surat Menunggu Disposisi Saya

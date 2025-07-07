@@ -43,14 +43,14 @@ class AdminBagianUmumController extends Controller
             'urgensi',
             'tujuan',
             'tujuan.jabatanStruktural',
-            'pengaju',
+            'pengaju.levelUser',
             'tracking' => function ($query) {
                 $query->latest();
             }, // Memastikan entri tracking terbaru selalu di paling atas
             'tracking.status',
-            'tracking.user',
-            'tracking.dariUser',
-            'tracking.keUser',
+            'tracking.user.levelUser',
+            'tracking.dariUser.levelUser',
+            'tracking.keUser.levelUser',
         ])
             ->whereHas('tracking', function ($query) use ($statusVerifikasiId) {
                 $query->where('status_surat_id', $statusVerifikasiId)
@@ -179,7 +179,7 @@ class AdminBagianUmumController extends Controller
             'pengaju',
             'tracking' => fn($q) => $q->latest(),
             'tracking.status',
-            'tracking.user',
+            'tracking.user.levelUser',
         ])
             ->whereHas('tracking', function ($query) {
                 $query->whereIn('status_surat_id', function ($subQuery) {
@@ -211,6 +211,7 @@ class AdminBagianUmumController extends Controller
                         'aksi_oleh' => $t->user->name ?? 'Sistem',
                         'status' => $t->status->nama_status ?? 'N/A',
                         'catatan' => $t->catatan,
+                        'level_aksi_oleh' => $t->user->levelUser->nama_level ?? null,
                     ]),
                 ];
             });

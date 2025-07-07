@@ -96,7 +96,7 @@ export default function Login({ status, canResetPassword }) {
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute inset-y-0 right-0 flex items-center pr-3"
                             >
-                                {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+                                {showPassword ? <EyeIcon /> : <EyeSlashIcon /> }
                             </button>
                         </div>
                     </div>

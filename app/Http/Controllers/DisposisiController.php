@@ -22,13 +22,13 @@ class DisposisiController extends Controller
         $namaStatus = 'Menunggu disposisi ' . $jabatan;
 
         $relationsToLoad = [
-            'pengaju',
+            'pengaju.levelUser',
             'jenisSurat',
             'urgensi',
             'disposisi',
             'latestTracking.status',
             'tracking' => function ($query) {
-                $query->with(['status', 'user', 'dariUser', 'keUser'])->latest();
+                $query->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest();
             },
         ];
 
@@ -51,13 +51,13 @@ class DisposisiController extends Controller
         $user = Auth::user();
 
         $relationsToLoad = [
-            'pengaju',
+            'pengaju.levelUser',
             'jenisSurat',
             'urgensi',
             'disposisi',
             'latestTracking.status',
             'tracking' => function ($query) {
-                $query->with(['status', 'user', 'dariUser', 'keUser'])->latest();
+                $query->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest();
             },
         ];
 
