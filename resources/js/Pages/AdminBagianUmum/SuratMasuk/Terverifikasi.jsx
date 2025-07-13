@@ -17,11 +17,15 @@ dayjs.locale("id");
 // Daftar status untuk dropdown filter
 const STATUS_OPTIONS = [
     "Semua Status",
-    "Menunggu Disposisi",
-    "Didisposisikan",
-    "Diproses",
-    "Selesai",
-    "Diarsipkan",
+    "Menunggu disposisi Direktur",
+    "Menunggu disposisi Wakil Direktur Bidang Akademik",
+    "Menunggu disposisi Wakil Direktur Bidang Kemahasiswaan",
+    "Menunggu disposisi Wakil Direktur Bidang Kerjasama dan Hubungan Masyarakat",
+    "Menunggu disposisi Kepala Bagian Perencanaan, Keuangan, dan Umum",
+    "Menunggu disposisi Kepala Bagian Akademik, Kemahasiswaan, dan Kerjasama",
+    "Menunggu Tindak Lanjut oleh Kepala Sub Bagian Akademik",
+    "Menunggu Tindak Lanjut oleh Kepala Sub Bagian Umum",
+    "Surat selesai diproses",
 ];
 
 // =======================================================================
@@ -83,7 +87,7 @@ const TrackingItem = ({ item, isLast }) => {
                     {/* Tampilkan level jika kondisi 'shouldShowLevel' terpenuhi */}
                     {shouldShowLevel && (
                         <span className="ml-1.5 px-1.5 py-0.5 bg-violet-200 text-violet-700 text-[10px] font-semibold rounded-md">
-                            ({item.level_aksi_oleh})
+                            {item.level_aksi_oleh}
                         </span>
                     )}
                 </p>
@@ -121,20 +125,27 @@ const DetailModal = ({ surat, onClose }) => (
                         Informasi Surat
                     </h3>
                     <dl>
-                        <DetailItem label="No. Agenda">
-                            {surat.no_agenda}
-                        </DetailItem>
+                        <DetailItem label="No. Agenda">{surat.no_agenda}</DetailItem>
                         <DetailItem label="Perihal">{surat.perihal}</DetailItem>
-                        <DetailItem label="Pengaju">{surat.pengaju}</DetailItem>
+                        <DetailItem label="Pengaju">
+                            <div className="flex items-center">
+                                <span>{surat.pengaju}</span>
+                                {/* Tampilkan level hanya jika Mahasiswa atau Pegawai */}
+                                {surat.pengaju_level && (
+                                    (surat.pengaju_level.toLowerCase() === 'mahasiswa' ||
+                                     surat.pengaju_level.toLowerCase() === 'pegawai')
+                                ) && (
+                                    <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                        {surat.pengaju_level}
+                                    </span>
+                                )}
+                            </div>
+                        </DetailItem>
                         <DetailItem label="Ditujukan Kepada">
                             {surat.ditujukan_kepada}
                         </DetailItem>
-                        <DetailItem label="Jenis Surat">
-                            {surat.jenis_surat}
-                        </DetailItem>
-                        <DetailItem label="Tgl. Pengajuan">
-                            {dayjs(surat.tgl_pengajuan).format("DD MMMM YYYY")}
-                        </DetailItem>
+                        <DetailItem label="Jenis Surat">{surat.jenis_surat}</DetailItem>
+                        <DetailItem label="Tgl. Pengajuan">{dayjs(surat.tgl_pengajuan).format("DD MMMM YYYY")}</DetailItem>
                         <DetailItem label="Urgensi">
                             <span className="px-2 py-0.5 text-xs font-medium text-red-800 bg-red-100 rounded-full">
                                 {surat.urgensi}
@@ -342,7 +353,7 @@ export default function Terverifikasi({ auth, daftarSurat }) {
                                     setStatusFilter(e.target.value);
                                     setCurrentPage(1);
                                 }}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm w-full md:w-56"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-400 text-sm w-1/2"
                             >
                                 {STATUS_OPTIONS.map((opt) => (
                                     <option key={opt} value={opt}>

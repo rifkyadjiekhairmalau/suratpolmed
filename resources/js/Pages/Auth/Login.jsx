@@ -39,8 +39,6 @@ export default function Login({ status, canResetPassword }) {
     return (
         <GuestLayout>
             <Head title="Log in" />
-
-            {/* --- KOTAK TRANSPARAN DITAMBAHKAN DI SINI --- */}
             <div className="bg-white/50 backdrop-blur-lg rounded-2xl p-8 border border-white/30 shadow-lg">
 
                 <h2 className="text-2xl text-center font-bold text-black mb-1">Masuk Untuk Memulai</h2>
@@ -106,18 +104,15 @@ export default function Login({ status, canResetPassword }) {
                             className="block w-1/3 mx-auto flex justify-center bg-violet-600 hover:bg-violet-700 transition text-white font-semibold py-3 rounded"
                             disabled={processing}
                         >
-                            Log in
+                            Login
                         </PrimaryButton>
                     </div>
                 </form>
 
             </div>
-            {/* --- AKHIR DARI KOTAK TRANSPARAN --- */}
         </GuestLayout>
     );
 }
-
-// ... (Sisa kode untuk komponen ikon tidak berubah)
 
 const UserIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-gray-500">

@@ -202,7 +202,19 @@ export default function DisposisiModal({
                                 {surat.perihal}
                             </DetailItem>
                             <DetailItem label="Pengaju">
-                                {surat.pengaju?.name}
+                                <div className="flex items-center">
+                                    <span>{surat.pengaju?.name}</span>
+
+                                    {/* Tampilkan level hanya jika Mahasiswa atau Pegawai */}
+                                    {surat.pengaju?.level_user?.nama_level &&
+                                        (surat.pengaju.level_user.nama_level.toLowerCase() === 'mahasiswa' ||
+                                        surat.pengaju.level_user.nama_level.toLowerCase() === 'pegawai')
+                                    && (
+                                        <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                            {surat.pengaju.level_user.nama_level}
+                                        </span>
+                                    )}
+                                </div>
                             </DetailItem>
                             <DetailItem label="Tgl Pengajuan">
                                 {dayjs(surat.tanggal_pengajuan).format(
@@ -377,7 +389,7 @@ export default function DisposisiModal({
                                                 ? "border-red-500"
                                                 : ""
                                         }`}
-                                        placeholder="Isi catatan ini jika memilih *Lainnya pada form *Pilih Catatan Disposisi"
+                                        placeholder="Catatan ini bisa di isi jika memilih *Lainnya pada form *Pilih Catatan Disposisi"
                                         disabled={!isLainnyaSelected}
                                     ></textarea>
                                     {errors.catatan_manual && (

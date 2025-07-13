@@ -34,7 +34,7 @@ export default function AdminSidebar() {
     <h3 className="text-2xl font-bold text-white mb-1">
         Sistem Surat
     </h3>
-    <p className="text-sm text-violet-200">Administrator</p>
+    <p className="mt-1 text-xs font-bold tracking-widest text-purple-100 uppercase">Administrator</p>
 </div>
                 <nav>
                     {/* Link ke Dashboard Admin - Menggunakan FaTachometerAlt untuk ikon dashboard */}

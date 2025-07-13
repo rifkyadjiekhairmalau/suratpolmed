@@ -49,7 +49,9 @@ class KasubagController extends Controller
             'pengaju.levelUser',
             'jenisSurat',
             'urgensi',
-            'latestTracking', // Cukup panggil ini
+            'latestTracking',
+            'tujuan.levelUser',
+            'tujuan.jabatanStruktural',
             'tracking' => fn($q) => $q->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest(),
         ];
 

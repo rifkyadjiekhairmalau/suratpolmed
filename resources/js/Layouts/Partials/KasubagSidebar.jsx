@@ -71,7 +71,7 @@ export default function KasubagSidebar() {
                     <h3 className="mb-1 text-2xl font-bold text-white">
                         Sistem Surat
                     </h3>
-                    <p className="text-sm text-purple-200">{auth.user.name}</p>
+                    <p className="mt-1 text-xs font-bold tracking-widest text-purple-100 uppercase">{auth.user.name}</p>
                 </div>
                 <nav>
                     {/* Menu untuk Notifikasi Kasubag */}

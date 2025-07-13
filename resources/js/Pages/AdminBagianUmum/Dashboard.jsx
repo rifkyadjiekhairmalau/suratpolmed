@@ -73,7 +73,7 @@ const TrackingItem = ({ item, isLast }) => {
                     {/* Tampilkan level jika ada */}
                     {item.level_aksi_oleh && (
                         <span className="ml-1.5 px-1.5 py-0.5 bg-violet-200 text-violet-700 text-[10px] font-semibold rounded-md">
-                            ({item.level_aksi_oleh})
+                            {item.level_aksi_oleh}
                         </span>
                     )}
                 </p>
@@ -248,7 +248,17 @@ const DetailModal = ({ surat, onClose }) => (
                             {surat.no_agenda}
                         </DetailItem>
                         <DetailItem label="Perihal">{surat.perihal}</DetailItem>
-                        <DetailItem label="Pengaju">{surat.pengaju}</DetailItem>
+                        <DetailItem label="Pengaju">
+                            <div className="flex items-center">
+                                <span>{surat.pengaju}</span>
+                                {/* Tampilkan level pengaju jika ada */}
+                                {surat.pengaju_level && (
+                                    <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                        {surat.pengaju_level}
+                                    </span>
+                                )}
+                            </div>
+                        </DetailItem>
                         <DetailItem label="Ditujukan Kepada">
                             {surat.ditujukan_kepada}
                         </DetailItem>
@@ -361,6 +371,7 @@ export default function Dashboard({
         jenis_surat:
             surat.jenis_surat?.nama_jenis || surat.jenis_surat_manual || "N/A",
         pengaju: surat.pengaju?.name || "N/A",
+        pengaju_level: surat.pengaju?.level_user?.nama_level || null,
         status_terkini:
             surat.tracking.length > 0
                 ? surat.tracking[0].status.nama_status

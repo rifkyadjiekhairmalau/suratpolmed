@@ -130,7 +130,21 @@ export default function KasubagModal({ show, onClose, surat, isReadOnly = false 
                         <dl>
                             <DetailItem label="No. Agenda">{surat.nomor_agenda || "-"}</DetailItem>
                             <DetailItem label="Perihal">{surat.perihal}</DetailItem>
-                            <DetailItem label="Pengaju">{surat.pengaju?.name}</DetailItem>
+                            <DetailItem label="Pengaju">
+                                <div className="flex items-center">
+                                    <span>{surat.pengaju?.name}</span>
+
+                                    {/* Tampilkan level hanya jika Mahasiswa atau Pegawai */}
+                                    {surat.pengaju?.level_user?.nama_level &&
+                                        (surat.pengaju.level_user.nama_level.toLowerCase() === 'mahasiswa' ||
+                                        surat.pengaju.level_user.nama_level.toLowerCase() === 'pegawai')
+                                    && (
+                                        <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                            {surat.pengaju.level_user.nama_level}
+                                        </span>
+                                    )}
+                                </div>
+                            </DetailItem>
                             <DetailItem label="Jenis Surat">
                                 {surat.jenis_surat?.nama_jenis || <span className="italic">{surat.jenis_surat_manual || "-"}</span>}
                             </DetailItem>

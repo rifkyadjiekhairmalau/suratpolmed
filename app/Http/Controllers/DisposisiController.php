@@ -27,6 +27,8 @@ class DisposisiController extends Controller
             'urgensi',
             'disposisi',
             'latestTracking.status',
+            'tujuan.levelUser',
+            'tujuan.jabatanStruktural',
             'tracking' => function ($query) {
                 $query->with(['status', 'user.levelUser', 'dariUser.levelUser', 'keUser.levelUser'])->latest();
             },

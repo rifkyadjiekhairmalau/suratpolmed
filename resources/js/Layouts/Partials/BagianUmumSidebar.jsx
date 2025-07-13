@@ -31,7 +31,7 @@ export default function BagianUmumSidebar() {
                     <h3 className="text-2xl font-bold text-white mb-1">
                         Sistem Surat
                     </h3>
-                    <p className="text-sm text-violet-200">Administrasi Umum</p>
+                    <p className="mt-1 text-xs font-bold tracking-widest text-purple-100 uppercase">Administrasi Umum</p>
                 </div>
                 <nav>
                     {/* ======================================================================= */}
