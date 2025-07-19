@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User; // Tambahkan import model User
 
 class LoginRequest extends FormRequest
 {
@@ -41,18 +42,33 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // 1. Ambil kredensial dasar (username & password) dari form
+        // Cari user berdasarkan username yang diinput
+        $user = User::where('username', $this->username)->first();
+
+        // Kasus 1: Username tidak terdaftar
+        if (! $user) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'username' => 'Username tidak terdaftar.', // Pesan spesifik
+            ]);
+        }
+
+        // Kasus 2: Akun nonaktif
+        if ($user->status === 'nonaktif') {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'username' => 'Akun Anda nonaktif. Silakan hubungi administrator.', // Pesan spesifik
+            ]);
+        }
+
+        // Kasus 3: Username terdaftar dan aktif, tapi password salah
+        // Kita tidak lagi menambahkan 'status' ke $credentials karena sudah dicek manual
         $credentials = $this->only('username', 'password');
 
-        // 2. Tambahkan syarat WAJIB: status pengguna harus 'aktif'
-        $credentials['status'] = 'aktif';
-
-        // 3. Gunakan kredensial yang sudah dimodifikasi untuk mencoba login
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
-
             throw ValidationException::withMessages([
-                'username' => trans('auth.failed'),
+                'password' => 'Password salah.', // Pesan spesifik untuk password
             ]);
         }
 
@@ -75,7 +91,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'username' => trans('auth.throttle', [ // Ubah 'email' menjadi 'username'
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -87,6 +103,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('username')) . '|' . $this->ip());
     }
 }
