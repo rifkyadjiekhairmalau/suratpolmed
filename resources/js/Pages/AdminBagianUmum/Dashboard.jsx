@@ -92,6 +92,7 @@ const TrackingItem = ({ item, isLast }) => {
 // =======================================================================
 const VerifikasiModal = ({ surat, onClose, onVerifikasi, onKembalikan }) => {
     const [catatan, setCatatan] = useState("");
+    const levelPengaju = surat.pengaju_level?.toLowerCase();
     const handleKembalikanClick = () => {
         if (!catatan.trim()) {
             Swal.fire({
@@ -134,8 +135,28 @@ const VerifikasiModal = ({ surat, onClose, onVerifikasi, onKembalikan }) => {
                                 {surat.perihal}
                             </DetailItem>
                             <DetailItem label="Pengaju">
-                                {surat.pengaju}
+                                <div className="flex items-center">
+                                    <span>{surat.pengaju}</span>
+                                    {surat.pengaju_level && (levelPengaju === 'mahasiswa' || levelPengaju === 'pegawai') && (
+                                        <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                            {surat.pengaju_level}
+                                        </span>
+                                    )}
+                                </div>
                             </DetailItem>
+
+                            {levelPengaju === 'mahasiswa' && (
+                                <>
+                                    <DetailItem label="NIM">{surat.pengaju_nim || 'N/A'}</DetailItem>
+                                    <DetailItem label="Program Studi">{surat.pengaju_prodi || 'N/A'}</DetailItem>
+                                </>
+                            )}
+                            {levelPengaju === 'pegawai' && (
+                                <>
+                                    <DetailItem label="NIP">{surat.pengaju_nip || 'N/A'}</DetailItem>
+                                    <DetailItem label="Jabatan">{surat.pengaju_jabatan || 'N/A'}</DetailItem>
+                                </>
+                            )}
                             <DetailItem label="Ditujukan Kepada">
                                 {surat.ditujukan_kepada}
                             </DetailItem>
@@ -223,7 +244,9 @@ const VerifikasiModal = ({ surat, onClose, onVerifikasi, onKembalikan }) => {
     );
 };
 
-const DetailModal = ({ surat, onClose }) => (
+const DetailModal = ({ surat, onClose }) => {
+    const levelPengaju = surat.pengaju_level?.toLowerCase();
+    return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border-2 border-gray-200">
             <header className="p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
@@ -249,16 +272,28 @@ const DetailModal = ({ surat, onClose }) => (
                         </DetailItem>
                         <DetailItem label="Perihal">{surat.perihal}</DetailItem>
                         <DetailItem label="Pengaju">
-                            <div className="flex items-center">
-                                <span>{surat.pengaju}</span>
-                                {/* Tampilkan level pengaju jika ada */}
-                                {surat.pengaju_level && (
-                                    <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
-                                        {surat.pengaju_level}
-                                    </span>
-                                )}
-                            </div>
-                        </DetailItem>
+                                <div className="flex items-center">
+                                    <span>{surat.pengaju}</span>
+                                    {surat.pengaju_level && (levelPengaju === 'mahasiswa' || levelPengaju === 'pegawai') && (
+                                        <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                            {surat.pengaju_level}
+                                        </span>
+                                    )}
+                                </div>
+                            </DetailItem>
+
+                            {levelPengaju === 'mahasiswa' && (
+                                <>
+                                    <DetailItem label="NIM">{surat.pengaju_nim || 'N/A'}</DetailItem>
+                                    <DetailItem label="Program Studi">{surat.pengaju_prodi || 'N/A'}</DetailItem>
+                                </>
+                            )}
+                            {levelPengaju === 'pegawai' && (
+                                <>
+                                    <DetailItem label="NIP">{surat.pengaju_nip || 'N/A'}</DetailItem>
+                                    <DetailItem label="Jabatan">{surat.pengaju_jabatan || 'N/A'}</DetailItem>
+                                </>
+                            )}
                         <DetailItem label="Ditujukan Kepada">
                             {surat.ditujukan_kepada}
                         </DetailItem>
@@ -331,6 +366,7 @@ const DetailModal = ({ surat, onClose }) => (
         </div>
     </div>
 );
+};
 
 // =======================================================================
 // KOMPONEN UTAMA DASHBOARD
@@ -368,10 +404,13 @@ export default function Dashboard({
         no_agenda: surat.nomor_agenda || "",
         tgl_pengajuan: surat.created_at, // Mengirim tanggal mentah
         perihal: surat.perihal || "",
-        jenis_surat:
-            surat.jenis_surat?.nama_jenis || surat.jenis_surat_manual || "N/A",
+        jenis_surat: surat.jenis_surat?.nama_jenis || surat.jenis_surat_manual || "N/A",
         pengaju: surat.pengaju?.name || "N/A",
         pengaju_level: surat.pengaju?.level_user?.nama_level || null,
+        pengaju_nim: surat.pengaju?.mahasiswa?.nim || null,
+        pengaju_prodi: surat.pengaju?.mahasiswa?.prodi?.nama_prodi || null,
+        pengaju_nip: surat.pengaju?.pegawai?.nip || null,
+        pengaju_jabatan: surat.pengaju?.pegawai?.jabatan?.nama_jabatan || surat.pengaju?.pegawai?.jabatan_struktural?.jabatan_struktural || null,
         status_terkini:
             surat.tracking.length > 0
                 ? surat.tracking[0].status.nama_status

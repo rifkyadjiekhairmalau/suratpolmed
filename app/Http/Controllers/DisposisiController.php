@@ -23,6 +23,8 @@ class DisposisiController extends Controller
 
         $relationsToLoad = [
             'pengaju.levelUser',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
             'jenisSurat',
             'urgensi',
             'disposisi',
@@ -54,6 +56,8 @@ class DisposisiController extends Controller
 
         $relationsToLoad = [
             'pengaju.levelUser',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
             'jenisSurat',
             'urgensi',
             'disposisi',

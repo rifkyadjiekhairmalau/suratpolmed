@@ -102,7 +102,9 @@ const TrackingItem = ({ item, isLast }) => {
 };
 
 // [PERUBAHAN]: Komponen Modal untuk menampilkan detail surat
-const DetailModal = ({ surat, onClose }) => (
+const DetailModal = ({ surat, onClose }) => {
+    const levelPengaju = surat.pengaju_level?.toLowerCase();
+    return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border-2 border-gray-200">
             <header className="p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
@@ -128,19 +130,31 @@ const DetailModal = ({ surat, onClose }) => (
                         <DetailItem label="No. Agenda">{surat.no_agenda}</DetailItem>
                         <DetailItem label="Perihal">{surat.perihal}</DetailItem>
                         <DetailItem label="Pengaju">
-                            <div className="flex items-center">
-                                <span>{surat.pengaju}</span>
-                                {/* Tampilkan level hanya jika Mahasiswa atau Pegawai */}
-                                {surat.pengaju_level && (
-                                    (surat.pengaju_level.toLowerCase() === 'mahasiswa' ||
-                                     surat.pengaju_level.toLowerCase() === 'pegawai')
-                                ) && (
-                                    <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
-                                        {surat.pengaju_level}
-                                    </span>
-                                )}
-                            </div>
-                        </DetailItem>
+                                <div className="flex items-center">
+                                    <span>{surat.pengaju}</span>
+                                    {surat.pengaju_level && (levelPengaju === 'mahasiswa' || levelPengaju === 'pegawai') && (
+                                        <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
+                                            {surat.pengaju_level}
+                                        </span>
+                                    )}
+                                </div>
+                            </DetailItem>
+
+                            {/* Field tambahan untuk Mahasiswa */}
+                            {levelPengaju === 'mahasiswa' && (
+                                <>
+                                    <DetailItem label="NIM">{surat.pengaju_nim || 'N/A'}</DetailItem>
+                                    <DetailItem label="Program Studi">{surat.pengaju_prodi || 'N/A'}</DetailItem>
+                                </>
+                            )}
+
+                            {/* Field tambahan untuk Pegawai */}
+                            {levelPengaju === 'pegawai' && (
+                                <>
+                                    <DetailItem label="NIP">{surat.pengaju_nip || 'N/A'}</DetailItem>
+                                    <DetailItem label="Jabatan">{surat.pengaju_jabatan || 'N/A'}</DetailItem>
+                                </>
+                            )}
                         <DetailItem label="Ditujukan Kepada">
                             {surat.ditujukan_kepada}
                         </DetailItem>
@@ -211,6 +225,7 @@ const DetailModal = ({ surat, onClose }) => (
         </div>
     </div>
 );
+};
 
 // =======================================================================
 // KOMPONEN UTAMA HALAMAN (TIDAK ADA PERUBAHAN FUNGSI)

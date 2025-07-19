@@ -100,6 +100,7 @@ export default function KasubagModal({ show, onClose, surat, isReadOnly = false 
     };
 
     const instruksiTracking = surat?.tracking?.[0];
+    const levelPengaju = surat?.pengaju?.level_user?.nama_level?.toLowerCase();
 
     return (
         <Modal
@@ -133,18 +134,27 @@ export default function KasubagModal({ show, onClose, surat, isReadOnly = false 
                             <DetailItem label="Pengaju">
                                 <div className="flex items-center">
                                     <span>{surat.pengaju?.name}</span>
-
-                                    {/* Tampilkan level hanya jika Mahasiswa atau Pegawai */}
-                                    {surat.pengaju?.level_user?.nama_level &&
-                                        (surat.pengaju.level_user.nama_level.toLowerCase() === 'mahasiswa' ||
-                                        surat.pengaju.level_user.nama_level.toLowerCase() === 'pegawai')
-                                    && (
+                                    {levelPengaju && (levelPengaju === 'mahasiswa' || levelPengaju === 'pegawai') && (
                                         <span className="ml-2 px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-semibold rounded-full">
                                             {surat.pengaju.level_user.nama_level}
                                         </span>
                                     )}
                                 </div>
                             </DetailItem>
+
+                            {levelPengaju === 'mahasiswa' && (
+                                <>
+                                    <DetailItem label="NIM">{surat.pengaju?.mahasiswa?.nim || 'N/A'}</DetailItem>
+                                    <DetailItem label="Program Studi">{surat.pengaju?.mahasiswa?.prodi?.nama_prodi || 'N/A'}</DetailItem>
+                                </>
+                            )}
+
+                            {levelPengaju === 'pegawai' && (
+                                <>
+                                    <DetailItem label="NIP">{surat.pengaju?.pegawai?.nip || 'N/A'}</DetailItem>
+                                    <DetailItem label="Jabatan">{surat.pengaju?.pegawai?.jabatan?.nama_jabatan || 'N/A'}</DetailItem>
+                                </>
+                            )}
                             <DetailItem label="Jenis Surat">
                                 {surat.jenis_surat?.nama_jenis || <span className="italic">{surat.jenis_surat_manual || "-"}</span>}
                             </DetailItem>

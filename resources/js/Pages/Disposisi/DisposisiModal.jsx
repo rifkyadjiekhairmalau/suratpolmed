@@ -170,6 +170,8 @@ export default function DisposisiModal({
 
     if (!show || !surat) return null;
 
+    const levelPengaju = surat.pengaju?.level_user?.nama_level?.toLowerCase();
+
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border-2 border-gray-200">
@@ -216,6 +218,19 @@ export default function DisposisiModal({
                                     )}
                                 </div>
                             </DetailItem>
+                            {levelPengaju === 'mahasiswa' && (
+                                <>
+                                    <DetailItem label="NIM">{surat.pengaju?.mahasiswa?.nim || 'N/A'}</DetailItem>
+                                    <DetailItem label="Program Studi">{surat.pengaju?.mahasiswa?.prodi?.nama_prodi || 'N/A'}</DetailItem>
+                                </>
+                            )}
+
+                            {levelPengaju === 'pegawai' && (
+                                <>
+                                    <DetailItem label="NIP">{surat.pengaju?.pegawai?.nip || 'N/A'}</DetailItem>
+                                    <DetailItem label="Jabatan">{surat.pengaju?.pegawai?.jabatan?.nama_jabatan || 'N/A'}</DetailItem>
+                                </>
+                            )}
                             <DetailItem label="Tgl Pengajuan">
                                 {dayjs(surat.tanggal_pengajuan).format(
                                     "DD MMMM YYYY"

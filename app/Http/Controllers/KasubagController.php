@@ -22,6 +22,8 @@ class KasubagController extends Controller
 
         $relationsToLoad = [
             'pengaju.levelUser',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
             'jenisSurat',
             'urgensi',
             'latestTracking', // Cukup panggil ini, karena sub-relasinya sudah otomatis dimuat oleh model
@@ -47,6 +49,8 @@ class KasubagController extends Controller
         // Terapkan perbaikan yang sama di sini
         $relationsToLoad = [
             'pengaju.levelUser',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
             'jenisSurat',
             'urgensi',
             'latestTracking',

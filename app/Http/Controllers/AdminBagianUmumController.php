@@ -44,6 +44,9 @@ class AdminBagianUmumController extends Controller
             'tujuan',
             'tujuan.jabatanStruktural',
             'pengaju.levelUser',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
+            'pengaju.pegawai.jabatanStruktural',
             'tracking' => function ($query) {
                 $query->latest();
             }, // Memastikan entri tracking terbaru selalu di paling atas
@@ -177,7 +180,9 @@ class AdminBagianUmumController extends Controller
             'jenisSurat',
             'tujuan.jabatanStruktural',
             'pengaju.levelUser',
-            'pengaju',
+            'pengaju.mahasiswa.prodi',
+            'pengaju.pegawai.jabatan',
+            'pengaju.pegawai.jabatanStruktural',
             'tracking' => fn($q) => $q->latest(),
             'tracking.status',
             'tracking.user.levelUser',
@@ -203,6 +208,10 @@ class AdminBagianUmumController extends Controller
                     'jenis_surat' => $surat->jenisSurat->nama_jenis ?? 'N/A',
                     'pengaju' => $surat->pengaju->name ?? 'N/A',
                     'pengaju_level' => $surat->pengaju->levelUser->nama_level ?? null,
+                    'pengaju_nim' => $surat->pengaju->mahasiswa->nim ?? null,
+                    'pengaju_prodi' => $surat->pengaju->mahasiswa->prodi->nama_prodi ?? null,
+                    'pengaju_nip' => $surat->pengaju->pegawai->nip ?? null,
+                    'pengaju_jabatan' => $surat->pengaju->pegawai->jabatan->nama_jabatan ?? $surat->pengaju->pegawai->jabatanStruktural->jabatan_struktural ?? null,
                     'status_terkini' => $latestStatus->status->nama_status ?? 'N/A',
                     'ditujukan_kepada' => $surat->tujuan->jabatanStruktural->jabatan_struktural ?? 'N/A',
                     'urgensi' => $surat->urgensi->nama_urgensi ?? '',
