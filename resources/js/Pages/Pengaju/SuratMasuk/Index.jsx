@@ -269,6 +269,7 @@ const PengajuDashboard = ({
     urgensi,
     tujuan,
     user,
+    nomorAgendaBerikutnya
 }) => {
     // ... (Seluruh state dan fungsi dari kode asli Anda tetap sama persis)
     const [allSurat, setAllSurat] = useState(suratMasuk || []);
@@ -370,7 +371,7 @@ const PengajuDashboard = ({
         const newNomorAgenda = `${paddedNumber}-${currentYear}`;
         setData({
             id: null,
-            nomor_agenda: newNomorAgenda,
+            nomor_agenda: nomorAgendaBerikutnya,
             jenis_surat_id: "",
             jenis_surat_manual: "",
             urgensi_surat_id: "",

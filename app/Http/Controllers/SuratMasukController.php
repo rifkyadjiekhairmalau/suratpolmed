@@ -42,6 +42,12 @@ class SuratMasukController extends Controller
         $jenisSurat = JenisSurat::where('level_user_id', $user->level_user_id)->get();
         $urgensi = UrgensiSurat::all();
 
+        $tahun = now()->year;
+        $jumlahTahunIni = SuratMasuk::whereYear('created_at', $tahun)->count();
+        $nomorBerikutnya = $jumlahTahunIni + 1;
+        // Format nomor dengan padding nol di depan (misal: 032)
+        $nomorAgendaBerikutnya = str_pad($nomorBerikutnya, 3, '0', STR_PAD_LEFT) . '/' . $tahun;
+
         $levelDirekturDanWadir = [5, 6];
         $jabatanFilter = [
             'Direktur',
@@ -62,6 +68,7 @@ class SuratMasukController extends Controller
             'urgensi' => $urgensi,
             'tujuan' => $tujuan,
             'user' => $user,
+            'nomorAgendaBerikutnya' => $nomorAgendaBerikutnya,
         ]);
     }
 
@@ -154,7 +161,7 @@ class SuratMasukController extends Controller
             'keterangan' => 'nullable|string|max:500',
             'nomor_surat' => 'nullable|string|max:100',
             'perihal' => 'required|string|max:255',
-            'file_surat' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+            'file_surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
         $validatedData['file_path'] = $surat->file_path; // Bawa path file lama
