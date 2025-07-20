@@ -269,7 +269,7 @@ const PengajuDashboard = ({
     urgensi,
     tujuan,
     user,
-    nomorAgendaBerikutnya
+    nomorAgendaBerikutnya,
 }) => {
     // ... (Seluruh state dan fungsi dari kode asli Anda tetap sama persis)
     const [allSurat, setAllSurat] = useState(suratMasuk || []);
@@ -286,6 +286,7 @@ const PengajuDashboard = ({
     const [searchQuery, setSearchQuery] = useState("");
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const [originalFileName, setOriginalFileName] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         id: null,
@@ -352,15 +353,26 @@ const PengajuDashboard = ({
             perihal: surat.perihal || "",
             file_surat: null,
         });
+
+        // Set originalFileName jika ada file_path
+        if (surat.file_path) {
+            const fileName = surat.file_path.split("/").pop(); // Mengambil nama file dari path
+            setOriginalFileName(fileName);
+        } else {
+            setOriginalFileName(null);
+        }
+
         setShowForm(true);
     };
     const handleCancelForm = () => {
         setShowForm(false);
         reset();
         setIsEditing(false);
+        setOriginalFileName(null);
     };
     const handleAddNewClick = () => {
         setIsEditing(false);
+        setOriginalFileName(null);
         reset();
         const currentYear = new Date().getFullYear();
         const countThisYear = allSurat.filter(
@@ -408,6 +420,7 @@ const PengajuDashboard = ({
             });
             return;
         }
+
         const options = {
             forceFormData: true,
             preserveScroll: true,
@@ -970,7 +983,7 @@ const PengajuDashboard = ({
                                                 >
                                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32" />
                                                 </svg>
-                                                <div className="flex text-sm text-gray-600">
+                                                <div className="text-center">
                                                     <label
                                                         htmlFor="file-upload"
                                                         className="relative cursor-pointer bg-white rounded-md font-medium text-violet-600 hover:text-violet-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-violet-500"
@@ -992,28 +1005,31 @@ const PengajuDashboard = ({
                                                             }
                                                         />
                                                     </label>
-                                                    <p className="pl-1">
-                                                        atau tarik dan lepas
-                                                    </p>
+                                                    <p className="pl-1"></p>
                                                 </div>
                                                 <p className="text-xs text-gray-500">
                                                     Maks. 2MB
                                                 </p>
-                                                {data.file_surat &&
-                                                    typeof data.file_surat
-                                                        .name !==
-                                                        "undefined" && (
-                                                        <p className="text-sm text-gray-700 mt-2">
-                                                            File dipilih:{" "}
-                                                            <span className="font-semibold">
-                                                                {
-                                                                    data
-                                                                        .file_surat
-                                                                        .name
-                                                                }
-                                                            </span>
-                                                        </p>
-                                                    )}
+                                                {data.file_surat ? (
+                                                    <p className="text-sm text-gray-700 mt-2">
+                                                        File dipilih:{" "}
+                                                        <span className="font-semibold">
+                                                            {
+                                                                data.file_surat
+                                                                    .name
+                                                            }
+                                                        </span>
+                                                    </p>
+                                                ) : isEditing &&
+                                                  originalFileName ? (
+                                                    <p className="text-sm text-gray-700 mt-2">
+                                                        File sebelumnya:{" "}
+                                                        <span className="font-semibold">
+                                                            {originalFileName}
+                                                        </span>
+                                                        <span className="ml-2 text-xs text-gray-500"></span>
+                                                    </p>
+                                                ) : null}
                                             </div>
                                         </div>
                                         {errors.file_surat && (

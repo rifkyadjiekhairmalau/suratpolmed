@@ -33,11 +33,7 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -45,30 +41,29 @@ class LoginRequest extends FormRequest
         // Cari user berdasarkan username yang diinput
         $user = User::where('username', $this->username)->first();
 
-        // Kasus 1: Username tidak terdaftar
+        // Username tidak terdaftar
         if (! $user) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
-                'username' => 'Username tidak terdaftar.', // Pesan spesifik
+                'username' => 'Username tidak terdaftar.', // Pesan 
             ]);
         }
 
-        // Kasus 2: Akun nonaktif
+        // Akun nonaktif
         if ($user->status === 'nonaktif') {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
-                'username' => 'Akun Anda nonaktif. Silakan hubungi administrator.', // Pesan spesifik
+                'username' => 'Akun Anda nonaktif. Silakan hubungi administrator.', // Pesan 
             ]);
         }
 
-        // Kasus 3: Username terdaftar dan aktif, tapi password salah
-        // Kita tidak lagi menambahkan 'status' ke $credentials karena sudah dicek manual
+        // Username terdaftar dan aktif, tapi password salah
         $credentials = $this->only('username', 'password');
 
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
-                'password' => 'Password salah.', // Pesan spesifik untuk password
+                'password' => 'Password salah.', // Pesan 
             ]);
         }
 
@@ -91,7 +86,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => trans('auth.throttle', [ // Ubah 'email' menjadi 'username'
+            'username' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
